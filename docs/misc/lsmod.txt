@@ -1,0 +1,210 @@
+Module                  Size  Used by
+rfcomm                 77824  4
+ccm                    20480  9
+xt_CHECKSUM            16384  1
+iptable_mangle         16384  1
+ipt_MASQUERADE         20480  1
+iptable_nat            16384  1
+nf_nat_ipv4            16384  2 ipt_MASQUERADE,iptable_nat
+cmac                   16384  1
+bridge                167936  0
+stp                    16384  1 bridge
+llc                    16384  2 bridge,stp
+bnep                   24576  2
+pci_stub               16384  1
+vboxpci                24576  0
+vboxnetadp             28672  0
+vboxnetflt             28672  0
+vboxdrv               483328  3 vboxpci,vboxnetadp,vboxnetflt
+binfmt_misc            24576  1
+nls_iso8859_1          16384  1
+uvcvideo               98304  0
+videobuf2_vmalloc      20480  1 uvcvideo
+videobuf2_memops       20480  1 videobuf2_vmalloc
+snd_soc_skl           106496  0
+videobuf2_v4l2         24576  1 uvcvideo
+snd_soc_hdac_hda       24576  1 snd_soc_skl
+videobuf2_common       49152  2 videobuf2_v4l2,uvcvideo
+msr                    16384  0
+videodev              200704  3 videobuf2_v4l2,uvcvideo,videobuf2_common
+snd_hda_ext_core       28672  2 snd_soc_hdac_hda,snd_soc_skl
+media                  53248  4 videodev,videobuf2_v4l2,uvcvideo,videobuf2_common
+snd_soc_skl_ipc        65536  1 snd_soc_skl
+snd_soc_sst_ipc        20480  1 snd_soc_skl_ipc
+snd_soc_sst_dsp        36864  1 snd_soc_skl_ipc
+snd_soc_acpi_intel_match    28672  1 snd_soc_skl
+snd_soc_acpi           16384  2 snd_soc_acpi_intel_match,snd_soc_skl
+snd_soc_core          233472  2 snd_soc_hdac_hda,snd_soc_skl
+btusb                  49152  0
+btrtl                  20480  1 btusb
+btbcm                  16384  1 btusb
+btintel                24576  1 btusb
+snd_compress           24576  1 snd_soc_core
+ac97_bus               16384  1 snd_soc_core
+bluetooth             557056  31 btrtl,btintel,btbcm,bnep,btusb,rfcomm
+snd_hda_codec_hdmi     53248  1
+ecdh_generic           28672  2 bluetooth
+snd_pcm_dmaengine      16384  1 snd_soc_core
+arc4                   16384  2
+intel_rapl             24576  0
+snd_hda_codec_realtek   114688  1
+snd_hda_codec_generic    77824  1 snd_hda_codec_realtek
+snd_hda_intel          40960  6
+x86_pkg_temp_thermal    20480  0
+intel_powerclamp       20480  0
+snd_hda_codec         131072  5 snd_hda_codec_generic,snd_hda_codec_hdmi,snd_hda_intel,snd_hda_codec_realtek,snd_soc_hdac_hda
+coretemp               20480  0
+snd_hda_core           86016  8 snd_hda_codec_generic,snd_hda_codec_hdmi,snd_hda_intel,snd_hda_ext_core,snd_hda_codec,snd_hda_codec_realtek,snd_soc_hdac_hda,snd_soc_skl
+snd_hwdep              20480  1 snd_hda_codec
+kvm_intel             241664  0
+snd_pcm               102400  8 snd_hda_codec_hdmi,snd_hda_intel,snd_hda_ext_core,snd_hda_codec,snd_soc_core,snd_soc_skl,snd_hda_core,snd_pcm_dmaengine
+snd_seq_midi           20480  0
+snd_seq_midi_event     16384  1 snd_seq_midi
+snd_rawmidi            36864  1 snd_seq_midi
+snd_seq                69632  2 snd_seq_midi,snd_seq_midi_event
+hid_sensor_accel_3d    20480  1
+ath10k_pci             40960  0
+hid_sensor_magn_3d     20480  1
+snd_seq_device         16384  3 snd_seq,snd_seq_midi,snd_rawmidi
+hid_sensor_rotation    20480  0
+hid_sensor_incl_3d     20480  0
+hid_sensor_gyro_3d     20480  0
+ath10k_core           434176  1 ath10k_pci
+crct10dif_pclmul       16384  1
+hid_sensor_trigger     20480  14 hid_sensor_gyro_3d,hid_sensor_incl_3d,hid_sensor_accel_3d,hid_sensor_magn_3d,hid_sensor_rotation
+industrialio_triggered_buffer    16384  5 hid_sensor_gyro_3d,hid_sensor_incl_3d,hid_sensor_accel_3d,hid_sensor_magn_3d,hid_sensor_rotation
+snd_timer              36864  2 snd_seq,snd_pcm
+crc32_pclmul           16384  0
+kfifo_buf              16384  1 industrialio_triggered_buffer
+ath                    36864  1 ath10k_core
+ghash_clmulni_intel    16384  0
+aesni_intel           372736  8
+aes_x86_64             20480  1 aesni_intel
+hid_sensor_iio_common    20480  6 hid_sensor_gyro_3d,hid_sensor_trigger,hid_sensor_incl_3d,hid_sensor_accel_3d,hid_sensor_magn_3d,hid_sensor_rotation
+mei_me                 40960  0
+input_leds             16384  0
+idma64                 20480  0
+mac80211              806912  1 ath10k_core
+mei                   102400  1 mei_me
+cfg80211              671744  3 ath,mac80211,ath10k_core
+industrialio           73728  10 industrialio_triggered_buffer,hid_sensor_gyro_3d,hid_sensor_trigger,hid_sensor_incl_3d,kfifo_buf,hid_sensor_accel_3d,hid_sensor_magn_3d,hid_sensor_rotation
+snd                    81920  25 snd_hda_codec_generic,snd_seq,snd_seq_device,snd_hda_codec_hdmi,snd_hwdep,snd_hda_intel,snd_hda_codec,snd_hda_codec_realtek,snd_timer,snd_compress,snd_soc_core,snd_pcm,snd_rawmidi
+joydev                 24576  0
+serio_raw              20480  0
+dell_laptop            20480  0
+soundcore              16384  1 snd
+ledtrig_audio          16384  3 snd_hda_codec_generic,snd_hda_codec_realtek,dell_laptop
+intel_xhci_usb_role_switch    16384  0
+roles                  16384  1 intel_xhci_usb_role_switch
+intel_hid              20480  0
+intel_vbtn             20480  0
+crypto_simd            16384  1 aesni_intel
+dell_wmi               20480  0
+soc_button_array       20480  0
+cryptd                 24576  3 crypto_simd,ghash_clmulni_intel,aesni_intel
+virt_dma               20480  1 idma64
+dell_smbios            28672  2 dell_wmi,dell_laptop
+processor_thermal_device    20480  0
+sparse_keymap          16384  3 intel_hid,dell_wmi,intel_vbtn
+dell_smm_hwmon         16384  0
+hid_multitouch         24576  0
+intel_soc_dts_iosf     20480  1 processor_thermal_device
+intel_pch_thermal      16384  0
+glue_helper            16384  1 aesni_intel
+intel_cstate           20480  0
+intel_rapl_perf        16384  0
+mac_hid                16384  0
+int3402_thermal        16384  0
+int3403_thermal        16384  0
+int3400_thermal        20480  0
+dcdbas                 20480  1 dell_smbios
+int340x_thermal_zone    16384  3 int3403_thermal,int3402_thermal,processor_thermal_device
+acpi_thermal_rel       16384  1 int3400_thermal
+wmi_bmof               16384  0
+dell_wmi_descriptor    20480  2 dell_wmi,dell_smbios
+acpi_pad              184320  0
+ip6t_REJECT            16384  1
+nf_reject_ipv6         20480  1 ip6t_REJECT
+nf_log_ipv6            16384  5
+xt_hl                  16384  22
+ip6t_rt                20480  3
+ipt_REJECT             16384  1
+nf_reject_ipv4         16384  1 ipt_REJECT
+nf_log_ipv4            16384  5
+nf_log_common          16384  2 nf_log_ipv4,nf_log_ipv6
+xt_LOG                 20480  10
+xt_limit               16384  13
+xt_tcpudp              20480  51
+xt_addrtype            16384  4
+xt_conntrack           16384  16
+sch_fq_codel           20480  1
+ip6table_filter        16384  1
+ip6_tables             32768  53 ip6table_filter
+nf_conntrack_netbios_ns    16384  0
+nf_conntrack_broadcast    16384  1 nf_conntrack_netbios_ns
+nf_nat_ftp             20480  0
+nf_nat                 36864  2 nf_nat_ftp,nf_nat_ipv4
+parport_pc             40960  0
+nf_conntrack_ftp       24576  1 nf_nat_ftp
+ppdev                  24576  0
+nf_conntrack          135168  8 xt_conntrack,nf_nat,nf_nat_ftp,ipt_MASQUERADE,nf_conntrack_netbios_ns,nf_nat_ipv4,nf_conntrack_broadcast,nf_conntrack_ftp
+nf_defrag_ipv6         24576  1 nf_conntrack
+lp                     20480  0
+nf_defrag_ipv4         16384  1 nf_conntrack
+parport                53248  3 parport_pc,lp,ppdev
+iptable_filter         16384  1
+bpfilter               32768  0
+ip_tables              28672  11 iptable_filter,iptable_nat,iptable_mangle
+x_tables               40960  16 ip6table_filter,xt_conntrack,iptable_filter,xt_LOG,xt_tcpudp,ipt_MASQUERADE,xt_addrtype,xt_CHECKSUM,ip6t_rt,ip6_tables,ipt_REJECT,ip_tables,xt_limit,xt_hl,ip6t_REJECT,iptable_mangle
+autofs4                45056  2
+raid10                 57344  0
+raid456               155648  0
+async_raid6_recov      24576  1 raid456
+async_memcpy           20480  2 raid456,async_raid6_recov
+async_pq               24576  2 raid456,async_raid6_recov
+async_xor              20480  3 async_pq,raid456,async_raid6_recov
+async_tx               20480  5 async_pq,async_memcpy,async_xor,raid456,async_raid6_recov
+xor                    24576  1 async_xor
+raid6_pq              114688  3 async_pq,raid456,async_raid6_recov
+libcrc32c              16384  3 nf_conntrack,nf_nat,raid456
+raid1                  45056  0
+raid0                  24576  0
+multipath              20480  0
+linear                 20480  0
+system76_io            16384  0
+uas                    24576  0
+usbhid                 53248  0
+usb_storage            69632  3 uas
+hid_sensor_custom      24576  0
+hid_sensor_hub         24576  8 hid_sensor_gyro_3d,hid_sensor_trigger,hid_sensor_iio_common,hid_sensor_incl_3d,hid_sensor_accel_3d,hid_sensor_magn_3d,hid_sensor_rotation,hid_sensor_custom
+hid_generic            16384  0
+intel_ishtp_hid        24576  0
+i915                 1814528  22
+kvmgt                  28672  0
+vfio_mdev              16384  0
+mdev                   24576  2 kvmgt,vfio_mdev
+vfio_iommu_type1       28672  0
+vfio                   32768  3 kvmgt,vfio_mdev,vfio_iommu_type1
+kvm                   626688  2 kvmgt,kvm_intel
+irqbypass              16384  1 kvm
+i2c_algo_bit           16384  1 i915
+drm_kms_helper        180224  1 i915
+syscopyarea            16384  1 drm_kms_helper
+sysfillrect            16384  1 drm_kms_helper
+sysimgblt              16384  1 drm_kms_helper
+fb_sys_fops            16384  1 drm_kms_helper
+drm                   475136  9 drm_kms_helper,i915
+psmouse               151552  0
+intel_lpss_pci         20480  0
+ahci                   40960  2
+intel_ish_ipc          24576  0
+intel_lpss             16384  1 intel_lpss_pci
+i2c_i801               32768  0
+i2c_hid                28672  0
+libahci                32768  1 ahci
+intel_ishtp            45056  2 intel_ishtp_hid,intel_ish_ipc
+wmi                    28672  4 dell_wmi,wmi_bmof,dell_smbios,dell_wmi_descriptor
+hid                   126976  6 i2c_hid,usbhid,hid_multitouch,hid_sensor_hub,intel_ishtp_hid,hid_generic
+pinctrl_sunrisepoint    28672  0
+pinctrl_intel          28672  1 pinctrl_sunrisepoint
+video                  45056  3 dell_wmi,dell_laptop,i915
