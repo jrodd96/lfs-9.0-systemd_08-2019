@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Removes/restores systemd symlink for resolv.conf depending on whether the copied
+# resolv.conf file from host machine is being used in chroot env. or not
+
+echo
+echo "Select one of the following options:"
+echo "(1) Restore systemd symlink to resolv.conf (if NOT in chroot environment)"
+echo "(2) Remove symlink, restore copied resolv.conf file from host (if needed for chroot)"
+echo
+read -p "Selection (1/2): " choice
+
+if [ "$choice" == "1" ]; then
+	mv /etc/resolv.conf /etc/resolv.conf.host;
+	ln -sfv /run/systemd/resolve/resolv.conf /etc/resolv.conf;
+	echo "Done."
+	exit 0
+elif [ "$choice" == "2" ]; then
+	rm /etc/resolv.conf;
+	mv /etc/resolv.conf.host /etc/resolv.conf;
+	echo "Done."
+	exit 0
+else
+	echo "[ERROR] Incorrect option given. Exitting without making changes..."
+	exit 1
+fi
+
+# End fix-resolv-symlink
