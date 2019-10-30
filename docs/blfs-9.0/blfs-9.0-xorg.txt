@@ -1,0 +1,1170 @@
+************* XORG LIBRARIES ******************************************************
+-----------------------------------------------------------------------------------
+
+tar -xf util-macros-1.19.2.tar.bz2 && cd util-macros-1.19.2 &&
+./configure $XORG_CONFIG &&
+make install &&
+cd .. && rm -rf util-macros-1.19.2
+
+-----------------------------------------------------------------------------------
+
+tar -xf xorgproto-2019.1.tar.bz2 && cd xorgproto-2019.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=$XORG_PREFIX .. &&
+ninja &&
+ninja install &&
+install -vdm 755 $XORG_PREFIX/share/doc/xorgproto-2019.1 &&
+install -vm 644 ../[^m]*.txt ../PM_spec $XORG_PREFIX/share/doc/xorgproto-2019.1 &&
+cd ../../ && rm -rf xorgproto-2019.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf libXau-1.0.9.tar.bz2 && cd libXau-1.0.9 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libXau-1.0.9
+
+-----------------------------------------------------------------------------------
+
+tar -xf libXdmcp-1.1.3.tar.bz2 && cd libXdmcp-1.1.3 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libXdmcp-1.1.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-proto-1.13.tar.bz2 && cd xcb-proto-1.13 &&
+./configure $XORG_CONFIG &&
+make -j2 install &&
+cd .. && rm -rf xcb-proto-1.13
+
+-----------------------------------------------------------------------------------
+
+tar -xf libxcb-1.13.1.tar.bz2 && cd libxcb-1.13.1 &&
+sed -i "s/pthread-stubs//" configure &&
+./configure $XORG_CONFIG      \
+            --without-doxygen \
+            --docdir='${datadir}'/doc/libxcb-1.13.1 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libxcb-1.13.1
+
+-----------------------------------------------------------------------------------
+***** XORG LIBS *******************************************************************
+
+for package in $(grep -v '^#' ../lib-7.md5 | awk '{print $2}')
+do
+  packagedir=${package%.tar.bz2}
+  tar -xf $package
+  pushd $packagedir
+  case $packagedir in
+    libICE* )
+      ./configure $XORG_CONFIG ICE_LIBS=-lpthread
+    ;;
+
+    libXfont2-[0-9]* )
+      ./configure $XORG_CONFIG --disable-devel-docs
+    ;;
+
+    libXt-[0-9]* )
+      ./configure $XORG_CONFIG \
+                  --with-appdefaultdir=/etc/X11/app-defaults
+    ;;
+
+    * )
+      ./configure $XORG_CONFIG
+    ;;
+  esac
+  make -j2
+  make -j2 install
+  popd
+  rm -rf $packagedir
+  ldconfig
+done
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-0.4.0.tar.bz2 && cd xcb-util-0.4.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcb-util-0.4.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-image-0.4.0.tar.bz2 && cd xcb-util-image-0.4.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcb-util-image-0.4.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-keysyms-0.4.0.tar.bz2 && cd xcb-util-keysyms-0.4.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcb-util-keysyms-0.4.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-renderutil-0.3.9.tar.bz2 && cd xcb-util-renderutil-0.3.9 &&
+./configure $XORG_CONFIG &&
+make -j1 &&
+make install &&
+cd .. && rm -rf xcb-util-renderutil-0.3.9
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-wm-0.4.1.tar.bz2 && cd xcb-util-wm-0.4.1 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcb-util-wm-0.4.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf xcb-util-cursor-0.1.3.tar.bz2 && cd xcb-util-cursor-0.1.3 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcb-util-cursor-0.1.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf xkeyboard-config-2.27.tar.bz2 && cd xkeyboard-config-2.27 &&
+./configure $XORG_CONFIG --with-xkb-rules-symlink=xorg &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xkeyboard-config-2.27
+
+-----------------------------------------------------------------------------------
+
+tar -xf cairo-1.16.0.tar.xz && cd cairo-1.16.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --enable-tee &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cairo-1.16.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf cairomm-1.12.2.tar.gz && cd cairomm-1.12.2 &&
+sed -e '/^libdocdir =/ s/$(book_name)/cairomm-1.12.2/' \
+    -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cairomm-1.12.2
+
+-----------------------------------------------------------------------------------
+
+tar -xf xdg-utils-1.1.3.tar.gz && cd xdg-utils-1.1.3 &&
+./configure --prefix=/usr --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xdg-utils-1.1.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf at-spi2-core-2.34.0.tar.xz && cd at-spi2-core-2.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr     \
+      --sysconfdir=/etc \
+      -Dsystemd_user_dir=no .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf at-spi2-core-2.34.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf atk-2.34.1.tar.xz && cd atk-2.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf atk-2.34.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf atkmm-2.28.0.tar.xz && cd atkmm-2.28.0 &&
+sed -e '/^libdocdir =/ s/$(book_name)/atkmm-2.28.0/' \
+    -i doc/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf atkmm-2.28.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf pango-1.42.4.tar.xz && cd pango-1.42.4 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf pango-1.42.4
+
+-----------------------------------------------------------------------------------
+
+tar -xf pangomm-2.42.0.tar.xz && cd pangomm-2.42.0 &&
+sed -e '/^libdocdir =/ s/$(book_name)/pangomm-2.42.0/' \
+    -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf pangomm-2.42.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf gdk-pixbuf-2.40.0.tar.xz && cd gdk-pixbuf-2.40.0 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gdk-pixbuf-2.40.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtk+-2.24.32.tar.xz && cd gtk+-2.24.32 &&
+sed -e 's#l \(gtk-.*\).sgml#& -o \1#' \
+    -i docs/{faq,tutorial}/Makefile.in      &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtk+-2.24.32
+
+-----------------------------------------------------------------------------------
+
+tar -xf libglade-2.6.4.tar.bz2 && cd libglade-2.6.4 &&
+sed -i '/DG_DISABLE_DEPRECATED/d' glade/Makefile.in &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libglade-2.6.4
+
+-----------------------------------------------------------------------------------
+
+tar -xf at-spi2-atk-2.34.1.tar.xz && cd at-spi2-atk-2.34.1 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf at-spi2-atk-2.34.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf libdrm-2.4.99.tar.bz2 && cd libdrm-2.4.99 &&
+mkdir build &&
+cd    build &&
+meson --prefix=$XORG_PREFIX -Dudev=true &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libdrm-2.4.99
+
+-----------------------------------------------------------------------------------
+
+tar -xf libva-2.5.0.tar.bz2 && cd libva-2.5.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libva-2.5.0
+
+tar -xf intel-vaapi-driver-2.3.0.tar.bz2 && cd intel-vaapi-driver-2.3.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf intel-vaapi-driver-2.3.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf libvdpau-1.3.tar.bz2 && cd libvdpau-1.3 &&
+mkdir build &&
+cd    build &&
+meson --prefix=$XORG_PREFIX ..
+ninja &&
+ninja install &&
+cd .. && rm -rf libvdpau-1.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf mesa-19.2.1.tar.xz && cd mesa-19.2.1 &&
+patch -Np1 -i ../../../patches/mesa-19.2.1-add_xdemos-1.patch &&
+GALLIUM_DRV="i915,nouveau,r600,radeonsi,svga,swrast,virgl"
+DRI_DRIVERS="i965,nouveau" &&
+mkdir build &&
+cd    build &&
+meson --prefix=$XORG_PREFIX          \
+      -Dbuildtype=release            \
+      -Ddri-drivers=$DRI_DRIVERS     \
+      -Dgallium-drivers=$GALLIUM_DRV \
+      -Dgallium-nine=false           \
+      -Dglx=dri                      \
+      -Dosmesa=gallium               \
+      -Dvalgrind=false               \
+      ..                             &&
+unset GALLIUM_DRV DRI_DRIVERS &&
+ninja &&
+ninja install &&
+install -v -dm755 /usr/share/doc/mesa-19.2.1 &&
+cp -rfv ../docs/* /usr/share/doc/mesa-19.2.1 &&
+cd ../../ && rm -rf mesa-19.2.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf libepoxy-1.5.3.tar.xz && cd libepoxy-1.5.3 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libepoxy-1.5.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtk+-3.24.12.tar.xz && cd gtk+-3.24.12 &&
+sed -i 's/3.24.10/3.24.11/' meson.build &&
+mkdir build-gtk3 &&
+cd    build-gtk3 &&
+meson --prefix=/usr     \
+      -Dcolord=yes      \
+      -Dgtk_doc=false   \
+      -Dman=true        \
+      -Dbroadway_backend=true .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gtk+-3.24.12
+
+-----------------------------------------------------------------------------------
+
+tar -xf xbitmaps-1.1.2.tar.bz2 && cd xbitmaps-1.1.2 &&
+./configure $XORG_CONFIG &&
+make -j2 install &&
+cd .. && rm -rf xbitmaps-1.1.2
+
+-----------------------------------------------------------------------------------
+
+for package in $(grep -v '^#' ../app-7.md5 | awk '{print $2}')
+do
+  packagedir=${package%.tar.?z*}
+  tar -xf $package
+  pushd $packagedir
+     case $packagedir in
+       luit-[0-9]* )
+         sed -i -e "/D_XOPEN/s/5/6/" configure
+       ;;
+     esac
+     ./configure $XORG_CONFIG
+     make -j2
+     make -j2 install
+  popd
+  rm -rf $packagedir
+done
+-----------------------------------------------------------------------------------
+
+tar -xf xcursor-themes-1.0.6.tar.bz2 && cd xcursor-themes-1.0.6 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xcursor-themes-1.0.6
+
+-----------------------------------------------------------------------------------
+
+for package in $(grep -v '^#' ../md5/font-7.md5 | awk '{print $2}')
+do
+  packagedir=${package%.tar.bz2}
+  tar -xf $package
+  pushd $packagedir
+    ./configure $XORG_CONFIG
+    make
+    make install
+  popd
+  rm -rf $packagedir
+done
+
+-----------------------------------------------------------------------------------
+
+tar -xf xkeyboard-config-2.27.tar.bz2 && cd xkeyboard-config-2.27 &&
+./configure $XORG_CONFIG --with-xkb-rules-symlink=xorg &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xkeyboard-config-2.27
+
+-----------------------------------------------------------------------------------
+
+tar -xf xorg-server-1.20.5.tar.bz2 && cd xorg-server-1.20.5 &&
+./configure $XORG_CONFIG            \
+            --enable-glamor         \
+            --enable-suid-wrapper   \
+            --with-xkb-output=/var/lib/xkb &&
+make -j2 &&
+make -j2 install &&
+mkdir -pv /etc/X11/xorg.conf.d 
+cd .. && rm -rf xorg-server-1.20.5
+
+-----------------------------------------------------------------------------------
+
+tar -xf libnotify-0.7.8.tar.xz && cd libnotify-0.7.8 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr -Dgtk_doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libnotify-0.7.8
+
+-----------------------------------------------------------------------------------
+
+tar -xf libevdev-1.8.0.tar.xz && cd libevdev-1.8.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libevdev-1.8.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-input-evdev-2.10.6.tar.bz2 && cd xf86-input-evdev-2.10.6 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-input-evdev-2.10.6
+
+-----------------------------------------------------------------------------------
+
+tar -xf libinput-1.14.2.tar.xz && cd libinput-1.14.2 &&
+mkdir build &&
+cd    build &&
+meson --prefix=$XORG_PREFIX \
+      -Dudev-dir=/lib/udev  \
+      -Ddebug-gui=false     \
+      -Dtests=false         \
+      -Ddocumentation=false \
+      -Dlibwacom=false      \
+      ..                    &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libinput-1.14.2
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-input-libinput-0.29.0.tar.bz2 && cd xf86-input-libinput-0.29.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-input-libinput-0.29.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-input-synaptics-1.9.1.tar.bz2 && cd xf86-input-synaptics-1.9.1 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-input-synaptics-1.9.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-video-fbdev-0.5.0.tar.bz2 && cd xf86-video-fbdev-0.5.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-video-fbdev-0.5.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-video-intel-20190723.tar.xz && cd xf86-video-intel-20190723 &&
+./autogen.sh $XORG_CONFIG     \
+            --enable-kms-only \
+            --enable-uxa      \
+            --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+mv -v /usr/share/man/man4/intel-virtual-output.4 \
+      /usr/share/man/man1/intel-virtual-output.1 &&
+      
+sed -i '/\.TH/s/4/1/' /usr/share/man/man1/intel-virtual-output.1 &&
+cd .. && rm -rf xf86-video-intel-20190723
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-video-nouveau-1.0.16.tar.bz2 && cd xf86-video-nouveau-1.0.16 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-video-nouveau-1.0.16
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-video-vmware-13.3.0.tar.bz2 && cd xf86-video-vmware-13.3.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-video-vmware-13.3.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-input-vmmouse-13.1.0.tar.bz2 && cd xf86-input-vmmouse-13.1.0 &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-input-vmmouse-13.1.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf libvdpau-va-gl-0.4.0.tar.gz && cd libvdpau-va-gl-0.4.0 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$XORG_PREFIX .. &&
+make -j2 &&
+make -j2 install &&
+echo "export VDPAU_DRIVER=va_gl" >> /etc/profile.d/xorg.sh &&
+cd ../../ && rm -rf libvdpau-va-gl-0.4.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf xf86-input-wacom-0.37.0.tar.bz2 && cd xf86-input-wacom-0.37.0 &&
+./configure $XORG_CONFIG \
+            --with-udev-rules-dir=/lib/udev/rules.d \
+            --with-systemd-unit-dir=/lib/systemd/system &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xf86-input-wacom-0.37.0
+
+-----------------------------------------------------------------------------------
+
+for package in $(grep -v '^#' ../legacy.md5 | awk '{print $2}')
+do
+  packagedir=${package%.tar.bz2}
+  tar -xf $package
+  pushd $packagedir
+    ./configure $XORG_CONFIG
+    make
+    make install
+  popd
+  rm -rf $packagedir
+  /sbin/ldconfig
+done
+
+-----------------------------------------------------------------------------------
+
+tar -xf atkmm-2.28.0.tar.xz && cd atkmm-2.28.0 &&
+sed -e '/^libdocdir =/ s/$(book_name)/atkmm-2.28.0/' \
+    -i doc/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf atkmm-2.28.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf glu-9.0.1.tar.xz && cd glu-9.0.1 &&
+./configure --prefix=$XORG_PREFIX --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf glu-9.0.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf cogl-1.22.4.tar.xz && cd cogl-1.22.4 &&
+./configure --prefix=/usr --enable-gles1 --enable-gles2         \
+    --enable-{kms,wayland,xlib}-egl-platform                    \
+    --enable-cogl-gst                                           \
+    --enable-wayland-egl-server                                 &&
+make -j1 &&
+make install &&
+cd .. && rm -rf cogl-1.22.4
+
+-----------------------------------------------------------------------------------
+
+tar -xf clutter-1.26.2.tar.xz && cd clutter-1.26.2 &&
+./configure --prefix=/usr               \
+            --sysconfdir=/etc           \
+            --enable-egl-backend        \
+            --enable-evdev-input        \
+            --enable-wayland-backend    \
+            --enable-wayland-compositor &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf clutter-1.26.2
+
+-----------------------------------------------------------------------------------
+
+tar -xf clutter-gst-3.0.27.tar.xz && cd clutter-gst-3.0.27 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf clutter-gst-3.0.27
+
+-----------------------------------------------------------------------------------
+
+tar -xf clutter-gtk-1.8.4.tar.xz && cd clutter-gtk-1.8.4 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf clutter-gtk-1.8.4
+
+-----------------------------------------------------------------------------------
+
+tar -xf colord-gtk-0.2.0.tar.xz && cd colord-gtk-0.2.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr  \
+      -Dgtk2=true    \
+      -Dvapi=true    \
+      -Ddocs=false   \
+      -Dman=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf colord-gtk-0.2.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf fltk-1.3.5-source.tar.gz && cd fltk-1.3.5 &&
+sed -i -e '/cat./d' documentation/Makefile       &&
+./configure --prefix=/usr    \
+            --enable-shared  &&
+make -j2 &&
+make docdir=/usr/share/doc/fltk-1.3.5 install &&
+make -C test          docdir=/usr/share/doc/fltk-1.3.5 install-linux &&
+make -C documentation docdir=/usr/share/doc/fltk-1.3.5 install-linux &&
+cd .. && rm -rf fltk-1.3.5
+
+-----------------------------------------------------------------------------------
+
+tar -xf freeglut-3.2.1.tar.gz && cd freeglut-3.2.1 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr       \
+      -DCMAKE_BUILD_TYPE=Release        \
+      -DFREEGLUT_BUILD_DEMOS=OFF        \
+      -DFREEGLUT_BUILD_STATIC_LIBS=OFF  \
+      .. && 
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf freeglut-3.2.1 
+
+-----------------------------------------------------------------------------------
+
+tar -xf glew-2.1.0.tgz && cd glew-2.1.0 &&
+sed -i 's%lib64%lib%g' config/Makefile.linux &&
+sed -i -e '/glew.lib.static:/d' \
+       -e '/0644 .*STATIC/d'    \
+       -e 's/glew.lib.static//' Makefile     &&
+make -j2 &&
+make -j2 install.all &&
+cd .. && rm -rf glew-2.1.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf librsvg-2.44.14.tar.xz && cd librsvg-2.44.14 &&
+./configure --prefix=/usr    \
+            --enable-vala    \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf librsvg-2.44.14
+
+-----------------------------------------------------------------------------------
+
+tar -xf goffice-0.10.45.tar.xz && cd goffice-0.10.45 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf goffice-0.10.45
+
+-----------------------------------------------------------------------------------
+
+tar -xf twm-1.0.10.tar.bz2 && cd twm-1.0.10 &&
+sed -i -e '/^rcdir =/s,^\(rcdir = \).*,\1/etc/X11/app-defaults,' src/Makefile.in &&
+./configure $XORG_CONFIG &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf twm-1.0.10
+
+-----------------------------------------------------------------------------------
+
+tar -xf xterm-349.tgz && cd xterm-349 &&
+sed -i '/v0/{n;s/new:/new:kb=^?:/}' termcap &&
+printf '\tkbs=\\177,\n' >> terminfo &&
+TERMINFO=/usr/share/terminfo \
+./configure $XORG_CONFIG     \
+    --with-app-defaults=/etc/X11/app-defaults &&
+make -j2            &&
+make -j2 install    &&
+make install-ti     &&
+mkdir -pv /usr/share/applications &&
+cp -v *.desktop /usr/share/applications/ &&
+cd .. && rm -rf xterm-349
+
+-----------------------------------------------------------------------------------
+
+tar -xf xclock-1.0.9.tar.bz2 && cd xclock-1.0.9 &&
+./configure $XORG_CONFIG &&
+make -j1 &&
+make install &&
+cd .. && rm -rf xclock-1.0.9
+
+-----------------------------------------------------------------------------------
+
+tar -xf xinit-1.4.1.tar.bz2 && cd xinit-1.4.1 &&
+./configure $XORG_CONFIG --with-xinitdir=/etc/X11/app-defaults &&
+make -j2 &&
+make -j2 install &&
+ldconfig &&
+cd .. && rm -rf xinit-1.4.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtk-engines-2.20.2.tar.bz2 && cd gtk-engines-2.20.2 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtk-engines-2.20.2
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtkmm-2.24.5.tar.xz && cd gtkmm-2.24.5 &&
+sed -e '/^libdocdir =/ s/$(book_name)/gtkmm-2.24.5/' \
+    -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtkmm-2.24.5
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtkmm-3.24.1.tar.xz && cd gtkmm-3.24.1 &&
+sed -e '/^libdocdir =/ s/$(book_name)/gtkmm-3.24.1/' \
+    -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtkmm-3.24.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtk-vnc-1.0.0.tar.xz && cd gtk-vnc-1.0.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gtk-vnc-1.0.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtksourceview-3.24.11.tar.xz && cd gtksourceview-3.24.11 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtksourceview-3.24.11
+
+-----------------------------------------------------------------------------------
+
+tar -xf gtksourceview-4.4.0.tar.xz && cd gtksourceview-4.4.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gtksourceview-4.4.0
+
+-----------------------------------------------------------------------------------
+
+tar -xf imlib2-1.5.1.tar.bz2 && cd imlib2-1.5.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/imlib2-1.5.1 &&
+install -v -m644    doc/{*.gif,index.html} \
+                    /usr/share/doc/imlib2-1.5.1 &&
+cd .. && rm -rf imlib2-1.5.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf keybinder-0.3.1.tar.gz && cd keybinder-0.3.1 &&
+./configure --prefix=/usr --disable-lua &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf keybinder-0.3.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf libdazzle-3.32.3.tar.xz && cd libdazzle-3.32.3 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libdazzle-3.32.3
+
+-----------------------------------------------------------------------------------
+
+tar -xf libxklavier-5.4.tar.bz2 && cd libxklavier-5.4 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libxklavier-5.4
+
+-----------------------------------------------------------------------------------
+
+tar -xf qt-everywhere-src-5.13.1.tar.xz && cd qt-everywhere-src-5.13.1 && 
+sed -i 's/python /python3 /' qtdeclarative/qtdeclarative.pro \
+                             qtdeclarative/src/3rdparty/masm/masm.pri &&
+./configure -prefix $QT5PREFIX                        \
+            -sysconfdir /etc/xdg                      \
+            -confirm-license                          \
+            -opensource                               \
+            -dbus-linked                              \
+            -openssl-linked                           \
+            -system-harfbuzz                          \
+            -system-sqlite                            \
+            -nomake examples                          \
+            -no-rpath                                 \
+            -skip qtwebengine                         &&
+make -j4 &&
+make -j4 install &&
+find $QT5PREFIX/ -name \*.prl \
+   -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \; &&
+QT5BINDIR=$QT5PREFIX/bin
+install -v -dm755 /usr/share/pixmaps/                  &&
+install -v -Dm644 qttools/src/assistant/assistant/images/assistant-128.png \
+                  /usr/share/pixmaps/assistant-qt5.png &&
+install -v -Dm644 qttools/src/designer/src/designer/images/designer.png \
+                  /usr/share/pixmaps/designer-qt5.png  &&
+install -v -Dm644 qttools/src/linguist/linguist/images/icons/linguist-128-32.png \
+                  /usr/share/pixmaps/linguist-qt5.png  &&
+install -v -Dm644 qttools/src/qdbus/qdbusviewer/images/qdbusviewer-128.png \
+                  /usr/share/pixmaps/qdbusviewer-qt5.png &&
+install -dm755 /usr/share/applications &&
+cd .. && rm -rf qt-everywhere-src-5.13.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf qtwebengine-everywhere-src-5.13.0.tar.xz && cd qtwebengine-everywhere-src-5.13.0 &&
+find -type f -name "*.pr[io]" |
+  xargs sed -i -e 's|INCLUDEPATH += |&$$QTWEBENGINE_ROOT/include |' &&
+patch -Np1 -i ../../../patches/qtwebengine-5.13.0-background_rendering_fix-1.patch
+mkdir build &&
+cd    build &&
+qmake .. -- -system-ffmpeg -webengine-icu &&
+make -j2 &&
+make -j2 install &&
+find $QT5DIR/ -name \*.prl \
+   -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \; &&
+cd ../../ && rm -rf qtwebengine-everywhere-src-5.13.0 
+
+-----------------------------------------------------------------------------------
+
+tar -xf startup-notification-0.12.tar.gz && cd startup-notification-0.12 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 -D doc/startup-notification.txt \
+    /usr/share/doc/startup-notification-0.12/startup-notification.txt &&
+cd .. && rm -rf startup-notification-0.12
+
+-----------------------------------------------------------------------------------
+
+tar -xf webkitgtk-2.26.1.tar.xz && cd webkitgtk-2.26.1 &&
+mkdir -vp build &&
+cd        build &&
+cmake -DCMAKE_BUILD_TYPE=Release  \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_SKIP_RPATH=ON       \
+      -DPORT=GTK                  \
+      -DLIB_INSTALL_DIR=/usr/lib  \
+      -DUSE_LIBHYPHEN=OFF         \
+      -DENABLE_MINIBROWSER=ON     \
+      -DUSE_WOFF2=OFF             \
+      -DUSE_WPE_RENDERER=OFF      \
+      -DENABLE_BUBBLEWRAP_SANDBOX=OFF \
+      -Wno-dev -G Ninja ..        &&
+ninja &&
+ninja install &&
+install -vdm755 /usr/share/gtk-doc/html/webkit{2,dom}gtk-4.0 &&
+install -vm644  ../Documentation/webkit2gtk-4.0/html/*   \
+                /usr/share/gtk-doc/html/webkit2gtk-4.0       &&
+install -vm644  ../Documentation/webkitdomgtk-4.0/html/* \
+                /usr/share/gtk-doc/html/webkitdomgtk-4.0     &&
+cd ../../ && rm -rf webkitgtk-2.26.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf fluxbox-1.3.7.tar.xz && cd fluxbox-1.3.7 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf fluxbox-1.3.7
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+-----------------------------------------------------------------------------------

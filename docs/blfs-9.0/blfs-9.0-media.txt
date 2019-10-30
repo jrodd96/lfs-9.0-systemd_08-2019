@@ -1,0 +1,894 @@
+******* MULTIMEDIA DRIVERS & LIBS / PROGS ************************************
+------------------------------------------------------------------------------
+
+tar -xf alsa-lib-1.1.9.tar.bz2 && cd alsa-lib-1.1.9 &&
+./configure &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf alsa-lib-1.1.9
+
+------------------------------------------------------------------------------
+
+tar -xf libogg-1.3.4.tar.xz && cd libogg-1.3.4 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libogg-1.3.4 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libogg-1.3.4
+
+------------------------------------------------------------------------------
+
+tar -xf libvorbis-1.3.6.tar.xz && cd libvorbis-1.3.6 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 doc/Vorbis* /usr/share/doc/libvorbis-1.3.6 &&
+cd .. && rm -rf libvorbis-1.3.6
+
+------------------------------------------------------------------------------
+
+tar -xf gstreamer-1.16.1.tar.xz && cd gstreamer-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dgst_debug=false   \
+       -Dgtk_doc=disabled  \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gstreamer-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf libcanberra-0.30.tar.xz && cd libcanberra-0.30 &&
+./configure --prefix=/usr --disable-oss &&
+make -j2 &&
+make docdir=/usr/share/doc/libcanberra-0.30 install &&
+cd .. && rm -rf libcanberra-0.30
+
+------------------------------------------------------------------------------
+
+tar -xf libtheora-1.1.1.tar.xz && cd libtheora-1.1.1 &&
+sed -i 's/png_\(sizeof\)/\1/g' examples/png2theora.c &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd examples/.libs &&
+for E in *; do
+  install -v -m755 $E /usr/bin/theora_${E}
+done
+cd .. && rm -rf libtheora-1.1.1
+
+------------------------------------------------------------------------------
+
+tar -xf cdparanoia-III-10.2.src.tgz && cd cdparanoia-III-10.2 &&
+patch -Np1 -i ../../../patches/cdparanoia-III-10.2-gcc_fixes-1.patch &&
+./configure --prefix=/usr --mandir=/usr/share/man &&
+make -j1 &&
+make install &&
+chmod -v 755 /usr/lib/libcdda_*.so.0.10.2 &&
+cd .. && rm -rf cdparanoia-III-10.2 
+
+------------------------------------------------------------------------------
+
+tar -xf gst-plugins-base-1.16.1.tar.xz && cd gst-plugins-base-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dgtk_doc=disabled  \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gst-plugins-base-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf soundtouch-2.1.0.tar.bz2 && cd soundtouch-2.1.0 &&
+./bootstrap &&
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/soundtouch-2.1.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf soundtouch-2.1.0
+
+------------------------------------------------------------------------------
+
+tar -xf libdvdread-6.0.1.tar.bz2 && cd libdvdread-6.0.1 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libdvdread-6.0.1 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libdvdread-6.0.1
+
+------------------------------------------------------------------------------
+
+tar -xf libdvdnav-6.0.0.tar.bz2 && cd libdvdnav-6.0.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libdvdnav-6.0.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libdvdnav-6.0.0
+
+------------------------------------------------------------------------------
+
+tar -xf gst-plugins-bad-1.16.1.tar.xz && cd gst-plugins-bad-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gst-plugins-bad-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf flac-1.3.3.tar.xz && cd flac-1.3.3 &&
+./configure --prefix=/usr \
+            --disable-thorough-tests &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf flac-1.3.3
+
+------------------------------------------------------------------------------
+
+tar -xf libsndfile-1.0.28.tar.gz && cd libsndfile-1.0.28 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libsndfile-1.0.28 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libsndfile-1.0.28
+
+------------------------------------------------------------------------------
+
+tar -xf speex-1.2.0.tar.gz && cd speex-1.2.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/speex-1.2.0 &&
+make -j2 &&
+make -j2 install &&
+cd ..                          &&
+tar -xf speexdsp-1.2rc3.tar.gz &&
+cd speexdsp-1.2rc3             &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/speexdsp-1.2rc3 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf rm -rf speexdsp-1.2rc3 &&
+rm -rf speex-1.2.0
+
+------------------------------------------------------------------------------
+
+tar -xf pulseaudio-13.0.tar.xz && cd pulseaudio-13.0 &&
+./configure --prefix=/usr                \
+            --sysconfdir=/etc            \
+            --localstatedir=/var         \
+            --disable-bluez4             \
+            --disable-rpath              &&
+make -j2 &&
+make -j2 install &&
+rm -fv /etc/dbus-1/system.d/pulseaudio-system.conf &&
+cd .. && rm -rf pulseaudio-13.0
+
+------------------------------------------------------------------------------
+
+tar -xf opus-1.3.1.tar.gz && cd opus-1.3.1 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/opus-1.3.1 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf opus-1.3.1
+
+------------------------------------------------------------------------------
+
+tar -xf libass-0.14.0.tar.xz && cd libass-0.14.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libass-0.14.0
+
+------------------------------------------------------------------------------
+
+tar -xf fdk-aac-2.0.1.tar.gz && cd fdk-aac-2.0.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf fdk-aac-2.0.1
+
+------------------------------------------------------------------------------
+
+tar -xf lame-3.100.tar.gz && cd lame-3.100 &&
+./configure --prefix=/usr --enable-mp3rtp --disable-static &&
+make -j2 &&
+make pkghtmldir=/usr/share/doc/lame-3.100 install &&
+cd .. && rm -rf lame-3.100
+
+------------------------------------------------------------------------------
+
+tar -xf libvpx-1.8.1.tar.gz && cd libvpx-1.8.1 &&
+sed -i 's/cp -p/cp/' build/make/Makefile &&
+mkdir libvpx-build            &&
+cd    libvpx-build            &&
+../configure --prefix=/usr    \
+             --enable-shared  \
+             --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf libvpx-1.8.1
+
+------------------------------------------------------------------------------
+
+tar -xf SDL2-2.0.10.tar.gz && cd SDL2-2.0.10 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+rm -v /usr/lib/libSDL2*.a &&
+cd .. && rm -rf SDL2-2.0.10
+
+------------------------------------------------------------------------------
+
+tar -xf x265_3.2.tar.gz && cd x265_3.2 &&
+mkdir bld &&
+cd    bld &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr ../source &&
+make -j2 &&
+make -j2 install &&
+rm -vf /usr/lib/libx265.a &&
+cd ../../ && rm -rf x265_3.2
+
+------------------------------------------------------------------------------
+
+tar -xf x264-snapshot-20190815-2245-stable.tar.bz2 && cd x264-snapshot-20190815-2245-stable &&
+./configure --prefix=/usr \
+            --enable-shared \
+            --disable-cli &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf x264-snapshot-20190815-2245-stable 
+
+------------------------------------------------------------------------------
+
+tar -xf libcddb-1.3.2.tar.bz2 && cd libcddb-1.3.2 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libcddb-1.3.2
+
+------------------------------------------------------------------------------
+
+tar -xf libcdio-2.1.0.tar.bz2 && cd libcdio-2.1.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+tar -xf ../libcdio-paranoia-10.2+2.0.0.tar.bz2 &&
+cd libcdio-paranoia-10.2+2.0.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libcdio-2.1.0
+
+------------------------------------------------------------------------------
+
+tar -xf gavl-1.4.0.tar.gz && cd gavl-1.4.0 &&
+LIBS=-lm                      \
+./configure --prefix=/usr     \
+            --without-doxygen \
+            --docdir=/usr/share/doc/gavl-1.4.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gavl-1.4.0
+
+------------------------------------------------------------------------------
+
+tar -xf frei0r-plugins-1.6.1.tar.gz && cd frei0r-plugins-1.6.1 &&
+sed -i 's/CV_RGB/cv::Scalar/' src/filter/facebl0r/facebl0r.cpp &&
+mkdir -vp build &&
+cd        build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr    \
+      -DCMAKE_BUILD_TYPE=Release     \
+      -Wno-dev ..                    &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf frei0r-plugins-1.6.1
+
+------------------------------------------------------------------------------
+
+tar -xf ffmpeg-4.2.1.tar.xz && cd ffmpeg-4.2.1 &&
+sed -i 's/-lflite"/-lflite -lasound"/' configure &&
+./configure --prefix=/usr        \
+            --enable-gpl         \
+            --enable-version3    \
+            --enable-nonfree     \
+            --disable-static     \
+            --enable-shared      \
+            --disable-debug      \
+            --enable-avresample  \
+            --enable-libass      \
+            --enable-libfdk-aac  \
+            --enable-libfreetype \
+            --enable-libmp3lame  \
+            --enable-libopus     \
+            --enable-libtheora   \
+            --enable-libvorbis   \
+            --enable-libvpx      \
+            --enable-libx264     \
+            --enable-libx265     \
+            --docdir=/usr/share/doc/ffmpeg-4.2.1 &&
+make -j1 &&
+gcc tools/qt-faststart.c -o tools/qt-faststart &&
+make install &&
+install -v -m755    tools/qt-faststart /usr/bin &&
+install -v -m755 -d           /usr/share/doc/ffmpeg-4.2.1 &&
+install -v -m644    doc/*.txt /usr/share/doc/ffmpeg-4.2.1 &&
+cd .. && rm -rf ffmpeg-4.2.1
+
+------------------------------------------------------------------------------
+
+tar -xf alsa-plugins-1.1.9.tar.bz2 && cd alsa-plugins-1.1.9 &&
+./configure --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf alsa-plugins-1.1.9
+
+------------------------------------------------------------------------------
+
+tar -xf alsa-utils-1.1.9.tar.bz2 && cd alsa-utils-1.1.9 &&
+./configure --disable-alsaconf \
+            --disable-bat   \
+            --disable-xmlto \
+            --with-curses=ncursesw &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf alsa-utils-1.1.9
+
+------------------------------------------------------------------------------
+
+tar -xf alsa-tools-1.1.7.tar.bz2 && cd alsa-tools-1.1.7 &&
+rm -rf qlo10k1 Makefile gitcompile &&
+for tool in *
+do
+  case $tool in
+    seq )
+      tool_dir=seq/sbiload
+    ;;
+    * )
+      tool_dir=$tool
+    ;;
+  esac
+  pushd $tool_dir
+    ./configure --prefix=/usr
+    make
+    make install
+    /sbin/ldconfig
+  popd
+done
+unset tool tool_dir
+cd .. && rm -rf alsa-tools-1.1.7
+
+------------------------------------------------------------------------------
+
+tar -xf alsa-firmware-1.0.29.tar.bz2 && cd alsa-firmware-1.0.29 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf alsa-firmware-1.0.29
+
+------------------------------------------------------------------------------
+
+tar -xf alsa-oss-1.1.8.tar.bz2 && cd alsa-oss-1.1.8 &&
+./configure --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf alsa-oss-1.1.8
+
+------------------------------------------------------------------------------
+
+tar -xf audiofile-0.3.6.tar.xz && cd audiofile-0.3.6 &&
+CXXFLAGS=-std=c++98 \
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf audiofile-0.3.6
+
+------------------------------------------------------------------------------
+
+tar -xf faad2-2.8.8.tar.gz && cd faad2-2.8.8 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+./frontend/faad -o sample.wav ../sample.aac &&
+aplay sample.wav &&
+make -j2 install &&
+cd .. && rm -rf faad2-2.8.8
+
+------------------------------------------------------------------------------
+
+tar -xf faac-1.29.9.2.tar.gz && cd faac-1.29.9.2 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf faac-1.29.9.2
+
+------------------------------------------------------------------------------
+
+tar -xf mpg123-1.25.12.tar.bz2 && cd mpg123-1.25.12 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf mpg123-1.25.12
+
+------------------------------------------------------------------------------
+
+tar -xf taglib-1.11.1.tar.gz && cd taglib-1.11.1 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release  \
+      -DBUILD_SHARED_LIBS=ON \
+      .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf taglib-1.11.1
+
+------------------------------------------------------------------------------
+
+tar -xf gst-plugins-good-1.16.1.tar.xz && cd gst-plugins-good-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gst-plugins-good-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf a52dec-0.7.4.tar.gz && cd a52dec-0.7.4 &&
+./configure --prefix=/usr \
+            --mandir=/usr/share/man \
+            --enable-shared \
+            --disable-static \
+            CFLAGS="-g -O2 $([ $(uname -m) = x86_64 ] && echo -fPIC)" &&
+make -j2 &&
+make -j2 install &&
+cp liba52/a52_internal.h /usr/include/a52dec &&
+install -v -m644 -D doc/liba52.txt \
+    /usr/share/doc/liba52-0.7.4/liba52.txt &&
+cd .. && rm -rf a52dec-0.7.4
+
+------------------------------------------------------------------------------
+
+tar -xf gst-plugins-ugly-1.16.1.tar.xz && cd gst-plugins-ugly-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gst-plugins-ugly-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf libao-1.2.0.tar.gz && cd libao-1.2.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 README /usr/share/doc/libao-1.2.0 &&
+cd .. && rm -rf libao-1.2.0
+
+------------------------------------------------------------------------------
+
+tar -xf libdiscid-0.6.2.tar.gz && cd libdiscid-0.6.2 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libdiscid-0.6.2
+
+------------------------------------------------------------------------------
+
+tar -xf libdvdcss-1.4.2.tar.bz2 && cd libdvdcss-1.4.2 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libdvdcss-1.4.2 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libdvdcss-1.4.2
+
+------------------------------------------------------------------------------
+
+tar -xf libdvdnav-6.0.0.tar.bz2 && cd libdvdnav-6.0.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libdvdnav-6.0.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libdvdnav-6.0.0
+
+------------------------------------------------------------------------------
+
+tar -xf libdv-1.0.0.tar.gz && cd libdv-1.0.0 &&
+./configure --prefix=/usr \
+            --disable-xv \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d      /usr/share/doc/libdv-1.0.0 &&
+install -v -m644 README* /usr/share/doc/libdv-1.0.0 &&
+cd .. && rm -rf libdv-1.0.0
+
+------------------------------------------------------------------------------
+
+tar -xf libmad-0.15.1b.tar.gz && cd libmad-0.15.1b &&
+patch -Np1 -i ../../../patches/libmad-0.15.1b-fixes-1.patch                &&
+sed "s@AM_CONFIG_HEADER@AC_CONFIG_HEADERS@g" -i configure.ac &&
+touch NEWS AUTHORS ChangeLog                                 &&
+autoreconf -fi                                               &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libmad-0.15.1b
+
+------------------------------------------------------------------------------
+
+tar -xf libmpeg2-0.5.1.tar.gz && cd libmpeg2-0.5.1 &&
+sed -i 's/static const/static/' libmpeg2/idct_mmx.c &&
+./configure --prefix=/usr    \
+            --enable-shared  \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/mpeg2dec-0.5.1 &&
+install -v -m644 README doc/libmpeg2.txt \
+                    /usr/share/doc/mpeg2dec-0.5.1 &&
+cd .. && rm -rf libmpeg2-0.5.1
+
+------------------------------------------------------------------------------
+
+tar -xf libmusicbrainz-2.1.5.tar.gz && cd libmusicbrainz-2.1.5 &&
+patch -Np1 -i ../../../patches/libmusicbrainz-2.1.5-missing-includes-1.patch &&
+CXXFLAGS=-std=c++98 \
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+(cd python && python setup.py build) &&
+make -j2 install &&
+install -v -m644 -D docs/mb_howto.txt \
+    /usr/share/doc/libmusicbrainz-2.1.5/mb_howto.txt &&
+(cd python && python setup.py install) &&
+cd .. && rm -rf libmusicbrainz-2.1.5
+
+------------------------------------------------------------------------------
+
+tar -xf libmusicbrainz-5.1.0.tar.gz && cd libmusicbrainz-5.1.0 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf libmusicbrainz-5.1.0
+
+------------------------------------------------------------------------------
+
+tar -xf libquicktime-1.2.4.tar.gz && cd libquicktime-1.2.4 &&
+patch -Np1 -i ../../../patches/libquicktime-1.2.4-ffmpeg4-1.patch &&
+./configure --prefix=/usr     \
+            --enable-gpl      \
+            --without-doxygen \
+            --docdir=/usr/share/doc/libquicktime-1.2.4
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/libquicktime-1.2.4 &&
+install -v -m644    README doc/{*.txt,*.html,mainpage.incl} \
+                    /usr/share/doc/libquicktime-1.2.4 &&
+cd .. && rm -rf libquicktime-1.2.4
+
+------------------------------------------------------------------------------
+
+tar -xf libsamplerate-0.1.9.tar.gz && cd libsamplerate-0.1.9 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make htmldocdir=/usr/share/doc/libsamplerate-0.1.9 install &&
+cd .. && rm -rf libsamplerate-0.1.9
+
+------------------------------------------------------------------------------
+
+tar -xf mlt-6.16.0.tar.gz && cd mlt-6.16.0 &&
+./configure --prefix=/usr     \
+            --enable-gpl      \
+            --enable-gpl3     \
+            --enable-opengl   \
+            --disable-gtk2    &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf mlt-6.16.0
+
+------------------------------------------------------------------------------
+
+tar -xf sbc-1.4.tar.xz && cd sbc-1.4 &&
+./configure --prefix=/usr --disable-static --disable-tester &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf sbc-1.4
+
+------------------------------------------------------------------------------
+
+tar -xf SDL-1.2.15.tar.gz && cd SDL-1.2.15 &&
+sed -e '/_XData32/s:register long:register _Xconst long:' \
+    -i src/video/x11/SDL_x11sym.h &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/SDL-1.2.15/html &&
+install -v -m644    docs/html/*.html \
+                    /usr/share/doc/SDL-1.2.15/html &&
+cd .. && rm -rf SDL-1.2.15
+
+------------------------------------------------------------------------------
+
+tar -xf pipewire-0.2.7.tar.gz && cd pipewire-0.2.7 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf pipewire-0.2.7
+
+------------------------------------------------------------------------------
+
+tar -xf sound-theme-freedesktop-0.8.tar.bz2 && cd sound-theme-freedesktop-0.8 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf sound-theme-freedesktop-0.8
+
+------------------------------------------------------------------------------
+
+tar -xf v4l-utils-1.16.6.tar.bz2 && cd v4l-utils-1.16.6 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  &&
+make -j1 &&
+make -j1 install &&
+cd .. && rm -rf v4l-utils-1.16.6
+
+------------------------------------------------------------------------------
+
+tar -xf xine-lib-1.2.9.tar.xz && cd xine-lib-1.2.9 &&
+sed -e 's|wand/magick_wand.h|MagickWand/MagickWand.h|' \
+    -i src/video_dec/image.c &&
+
+sed -e 's/\(xcb-shape >= 1.0\)/xcb \1/' \
+    -i m4/video_out.m4 &&
+
+./configure --prefix=/usr          \
+            --disable-vcd          \
+            --with-external-dvdnav \
+            --docdir=/usr/share/doc/xine-lib-1.2.9 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xine-lib-1.2.9
+
+------------------------------------------------------------------------------
+
+tar -xf xvidcore-1.3.5.tar.gz && cd xvidcore &&
+cd build/generic &&
+sed -i 's/^LN_S=@LN_S@/& -f -v/' platform.inc.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+sed -i '/libdir.*STATIC_LIB/ s/^/#/' Makefile &&
+make -j2 install &&
+chmod -v 755 /usr/lib/libxvidcore.so.4.3 &&
+install -v -m755 -d /usr/share/doc/xvidcore-1.3.5/examples &&
+install -v -m644 ../../doc/* /usr/share/doc/xvidcore-1.3.5 &&
+install -v -m644 ../../examples/* \
+    /usr/share/doc/xvidcore-1.3.5/examples &&
+cd ../../ && rm -rf xvidcore
+
+------------------------------------------------------------------------------
+
+tar -xf v4l-utils-1.18.0.tar.bz2 && cd v4l-utils-1.18.0 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  &&
+make -j1 &&
+make install &&
+cd .. && rm -rf v4l-utils-1.18.0
+
+------------------------------------------------------------------------------
+
+tar -xf gst-libav-1.16.1.tar.xz && cd gst-libav-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gst-libav-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf gstreamer-vaapi-1.16.1.tar.xz && cd gstreamer-vaapi-1.16.1 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr       \
+       -Dbuildtype=release \
+       -Dpackage-origin=http://www.linuxfromscratch.org/blfs/view/svn/ \
+       -Dpackage-name="GStreamer 1.16.1 BLFS" &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gstreamer-vaapi-1.16.1
+
+------------------------------------------------------------------------------
+
+tar -xf id3lib-3.8.3.tar.gz && cd id3lib-3.8.3 &&
+patch -Np1 -i ../../../patches/id3lib-3.8.3-consolidated_patches-1.patch &&
+libtoolize -fc                &&
+aclocal                       &&
+autoconf                      &&
+automake --add-missing --copy &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cp doc/man/* /usr/share/man/man1 &&
+install -v -m755 -d /usr/share/doc/id3lib-3.8.3 &&
+install -v -m644 doc/*.{gif,jpg,png,ico,css,txt,php,html} \
+                    /usr/share/doc/id3lib-3.8.3 &&
+cd .. && rm -rf id3lib-3.8.3
+
+------------------------------------------------------------------------------
+
+tar -xf pnmixer-v0.7.2.tar.gz && cd pnmixer-v0.7.2 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..  &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf pnmixer-v0.7.2
+
+------------------------------------------------------------------------------
+
+tar -xf vorbis-tools-1.4.0.tar.gz && cd vorbis-tools-1.4.0 &&
+patch -Np1 -i ../../../patches/vorbis-tools-1.4.0-security_fix-1.patch &&
+./configure --prefix=/usr \
+            --enable-vcut &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf vorbis-tools-1.4.0
+
+------------------------------------------------------------------------------
+
+tar -xf MPlayer-1.4.tar.xz && cd MPlayer-1.4 &&
+./configure --prefix=/usr            \
+            --confdir=/etc/mplayer   \
+            --enable-dynamic-plugins \
+            --enable-menu            \
+            --enable-gui             &&
+make &&
+make doc &&
+make install  &&
+ln -svf ../icons/hicolor/48x48/apps/mplayer.png \
+        /usr/share/pixmaps/mplayer.png &&
+install -v -m755 -d /usr/share/doc/mplayer-1.4 &&
+install -v -m644    DOCS/HTML/en/* \
+                    /usr/share/doc/mplayer-1.4 &&
+install -v -m644 etc/codecs.conf /etc/mplayer  &&
+tar -xvf  ../Clearlooks-2.0.tar.bz2 \
+    -C    /usr/share/mplayer/skins &&
+ln  -sfvn Clearlooks /usr/share/mplayer/skins/default &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd .. && rm -rf MPlayer-1.4
+
+------------------------------------------------------------------------------
+
+tar -xf transcode-1.1.7.tar.bz2 && cd transcode-1.1.7 &&
+sed -i 's|doc/transcode|&-$(PACKAGE_VERSION)|' \
+       $(find . -name Makefile.in -exec grep -l 'docsdir =' {} \;) &&
+patch -Np1 -i ../../../patches/transcode-1.1.7-ffmpeg4-1.patch     &&
+./configure --prefix=/usr         \
+            --enable-alsa         \
+            --enable-libmpeg2 --enable-ogg --enable-theora --enable-vorbis --enable-lzo --enable-libquicktime --enable-a52 --enable-faac --enable-xvid --enable-x264 --enable-oss    &&
+make -j1 &&
+make install &&
+cd .. && rm -rf transcode-1.1.7
+
+------------------------------------------------------------------------------
+
+tar -xf vlc-3.0.8.tar.xz && cd vlc-3.0.8 &&
+sed -i '/vlc_demux.h/a #define LUA_COMPAT_APIINTCASTS' modules/lua/vlc.h   &&
+sed -i '/LIBSSH2_VERSION_NUM/s/10801/10900/' modules/access/sftp.c &&
+BUILDCC=gcc ./configure --prefix=/usr    \
+                        --disable-opencv \
+	                --disable-qt     \
+                        --disable-vpx    &&
+make &&
+make docdir=/usr/share/doc/vlc-3.0.8 install &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd .. && rm -rf vlc-3.0.8
+
+------------------------------------------------------------------------------
+
+tar -xf xine-ui-0.99.10.tar.xz && cd xine-ui-0.99.10 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make docsdir=/usr/share/doc/xine-ui-0.99.10 install &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd .. && rm -rf xine-ui-0.99.10
+
+------------------------------------------------------------------------------
+
+tar -xf cdrdao-1.2.4.tar.bz2 && cd cdrdao-1.2.4 &&
+./configure --prefix=/usr --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/cdrdao-1.2.4 &&
+install -v -m644 README /usr/share/doc/cdrdao-1.2.4 &&
+cd .. && rm -rf cdrdao-1.2.4
+
+------------------------------------------------------------------------------
+
+tar -xf cdrtools-3.02a09.tar.bz2 && cd cdrtools-3.02 &&
+export GMAKE_NOWARN=true &&
+make -j1 INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root &&
+export GMAKE_NOWARN=true &&
+make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install &&
+install -v -m755 -d /usr/share/doc/cdrtools-3.02a09 &&
+install -v -m644 README* ABOUT doc/*.ps \
+                    /usr/share/doc/cdrtools-3.02a09 &&
+cd .. && rm -rf cdrtools-3.02
+
+------------------------------------------------------------------------------
+
+tar -xf dvd+rw-tools-7.1.tar.gz && cd dvd+rw-tools-7.1 &&
+sed -i '/stat.h/a #include <sys/sysmacros.h>' growisofs.c &&
+sed -i '/stdlib/a #include <limits.h>' transport.hxx &&
+make all rpl8 btcflash &&
+make prefix=/usr install &&
+install -v -m644 -D index.html \
+    /usr/share/doc/dvd+rw-tools-7.1/index.html &&
+cd .. && rm -rf dvd+rw-tools-7.1
+
+------------------------------------------------------------------------------
+
+tar -xf libburn-1.5.0.tar.gz && cd libburn-1.5.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libburn-1.5.0
+
+------------------------------------------------------------------------------
+
+tar -xf libisofs-1.5.0.tar.gz && cd libisofs-1.5.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libisofs-1.5.0
+
+------------------------------------------------------------------------------
+
+tar -xf libisoburn-1.5.0.tar.gz && cd libisoburn-1.5.0 &&
+./configure --prefix=/usr              \
+            --disable-static           \
+            --enable-pkg-check-modules &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libisoburn-1.5.0
+
+------------------------------------------------------------------------------

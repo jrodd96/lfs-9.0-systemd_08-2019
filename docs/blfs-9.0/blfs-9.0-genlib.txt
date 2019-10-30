@@ -1,0 +1,1034 @@
+*********** AFTER LFS *********************************************************
+-------------------------------------------------------------------------------
+
+tar -xf lsb-release-1.4.tar.gz && cd lsb-release-1.4 &&
+sed -i "s|n/a|unavailable|" lsb_release &&
+./help2man -N --include ./lsb_release.examples \
+              --alt_version_key=program_version ./lsb_release > lsb_release.1 &&
+install -v -m 644 lsb_release.1 /usr/share/man/man1 &&
+install -v -m 755 lsb_release   /usr/bin &&
+cd .. && rm -rf lsb-release-1.4
+
+---------------------------------------------------------------------------------
+************************ XML ****************************************************
+---------------------------------------------------------------------------------
+
+tar -xf itstool-2.0.6.tar.bz2 && cd itstool-2.0.6 &&
+PYTHON=/usr/bin/python3 ./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf itstool-2.0.6
+
+---------------------------------------------------------------------------------
+
+tar -xf sgml-common-0.6.3.tgz && cd sgml-common-0.6.3 &&
+patch -Np1 -i ../../../patches/sgml-common-0.6.3-manpage-1.patch &&
+autoreconf -f -i &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make docdir=/usr/share/doc install &&
+install-catalog --add /etc/sgml/sgml-ent.cat \
+    /usr/share/sgml/sgml-iso-entities-8879.1986/catalog &&
+install-catalog --add /etc/sgml/sgml-docbook.cat \
+    /etc/sgml/sgml-ent.cat &&
+cd .. && rm -rf sgml-common-0.6.3
+
+---------------------------------------------------------------------------------
+
+mkdir -v docbook-4.5 && cp docbook-4.5.zip docbook-4.5 &&
+cd docbook-4.5 && unzip docbook-4.5.zip &&
+sed -i -e '/ISO 8879/d' \
+       -e '/gml/d' docbook.cat &&
+install -v -d /usr/share/sgml/docbook/sgml-dtd-4.5 &&
+chown -R root:root . &&
+install -v docbook.cat /usr/share/sgml/docbook/sgml-dtd-4.5/catalog &&
+cp -v -af *.dtd *.mod *.dcl /usr/share/sgml/docbook/sgml-dtd-4.5 &&
+install-catalog --add /etc/sgml/sgml-docbook-dtd-4.5.cat \
+    /usr/share/sgml/docbook/sgml-dtd-4.5/catalog &&
+install-catalog --add /etc/sgml/sgml-docbook-dtd-4.5.cat \
+    /etc/sgml/sgml-docbook.cat &&
+cd .. && rm -rf docbook-4.5
+
+----------------------------------------------------------------------------------
+
+mkdir -v docbook-3.1 && unzip docbk31.zip -d docbook-3.1 &&
+cd docbook-3.1 &&
+sed -i -e '/ISO 8879/d' \
+       -e 's|DTDDECL "-//OASIS//DTD DocBook V3.1//EN"|SGMLDECL|g' \
+       docbook.cat &&
+install -v -d -m755 /usr/share/sgml/docbook/sgml-dtd-3.1 &&
+chown -R root:root . &&
+install -v docbook.cat /usr/share/sgml/docbook/sgml-dtd-3.1/catalog &&
+cp -v -af *.dtd *.mod *.dcl /usr/share/sgml/docbook/sgml-dtd-3.1 &&
+install-catalog --add /etc/sgml/sgml-docbook-dtd-3.1.cat \
+    /usr/share/sgml/docbook/sgml-dtd-3.1/catalog &&
+install-catalog --add /etc/sgml/sgml-docbook-dtd-3.1.cat \
+    /etc/sgml/sgml-docbook.cat &&
+cd .. && rm -rf docbook-3.1
+
+----------------------------------------------------------------------------------
+
+mkdir -v docbook-xml-4.5 && cp docbook-xml-4.5.zip docbook-xml-4.5 &&
+cd docbook-xml-4.5 && unzip docbook-xml-4.5.zip &&
+install -v -d -m755 /usr/share/xml/docbook/xml-dtd-4.5 &&
+install -v -d -m755 /etc/xml &&
+chown -R root:root . &&
+cp -v -af docbook.cat *.dtd ent/ *.mod \
+    /usr/share/xml/docbook/xml-dtd-4.5 &&
+cd .. && rm -rf docbook-xml-4.5
+
+----------------------------------------------------------------------------------
+
+tar -xf docbook-xsl-nons-1.79.2.tar.bz2 && cd docbook-xsl-nons-1.79.2 &&
+patch -Np1 -i ../../../patches/docbook-xsl-nons-1.79.2-stack_fix-1.patch &&
+install -v -m755 -d /usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2 &&
+cp -v -R VERSION assembly common eclipse epub epub3 extensions fo        \
+         highlighting html htmlhelp images javahelp lib manpages params  \
+         profiling roundtrip slides template tests tools webhelp website \
+         xhtml xhtml-1_1 xhtml5                                          \
+    /usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2 &&
+ln -s VERSION /usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2/VERSION.xsl &&
+install -v -m644 -D README \
+                    /usr/share/doc/docbook-xsl-nons-1.79.2/README.txt &&
+install -v -m644    RELEASE-NOTES* NEWS* \
+                    /usr/share/doc/docbook-xsl-nons-1.79.2 &&
+cd .. && rm -rf docbook-xsl-nons-1.79.2
+
+----------------------------------------------------------------------------------
+
+tar -xf xmlto-0.0.28.tar.bz2 && cd xmlto-0.0.28 &&
+LINKS="/usr/bin/links" \
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xmlto-0.0.28
+
+--------------------------------------------------------------------------------
+**** GEN-LIB & DEP. PACKS ******************************************************
+--------------------------------------------------------------------------------
+
+tar -xf apr-1.7.0.tar.bz2 && cd apr-1.7.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --with-installbuilddir=/usr/share/apr-1/build &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf apr-1.7.0
+
+------------------------------------------------------------------------------------------
+
+tar -xf apr-util-1.6.1.tar.bz2 && cd apr-util-1.6.1 &&
+./configure --prefix=/usr       \
+            --with-apr=/usr     \
+            --with-gdbm=/usr    \
+            --with-openssl=/usr \
+            --with-crypto &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf apr-util-1.6.1
+
+----------------------------------------------------------------------------------------
+
+tar -xf libtasn1-4.14.tar.gz && cd libtasn1-4.14 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+make -C doc/reference install-data-local &&
+cd .. && rm -rf libtasn1-4.14
+
+---------------------------------------------------------------------------------------
+
+tar -xf aspell-0.60.7.tar.gz && cd aspell-0.60.7 &&
+sed -i '/ top.do_check ==/s/top.do_check/*&/' modules/filter/tex.cpp &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+ln -svfn aspell-0.60 /usr/lib/aspell &&
+install -v -m755 -d /usr/share/doc/aspell-0.60.7/aspell{,-dev}.html &&
+install -v -m644 manual/aspell.html/* \
+    /usr/share/doc/aspell-0.60.7/aspell.html &&
+install -v -m644 manual/aspell-dev.html/* \
+    /usr/share/doc/aspell-0.60.7/aspell-dev.html &&
+install -v -m 755 scripts/ispell /usr/bin/ &&
+install -v -m 755 scripts/spell /usr/bin/ &&
+cd .. && rm -rf aspell-0.60.7
+
+tar -xf aspell6-en-2018.04.16-0.tar.bz2 && cd aspell6-en-2018.04.16-0 &&
+./configure &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf aspell6-en-2018.04.16-0
+
+-----------------------------------------------------------------------------------------
+
+tar -xf boost_1_71_0.tar.bz2 && cd boost_1_71_0 &&
+./bootstrap.sh --prefix=/usr &&
+./b2 stage threading=multi link=shared &&
+./b2 install threading=multi link=shared                 &&
+ln -svf detail/sha1.hpp /usr/include/boost/uuid/sha1.hpp &&
+cd .. && rm -rf boost_1_71_0
+
+--------------------------------------------------------------------------------
+
+tar -xf clucene-core-2.3.3.4.tar.gz && cd clucene-core-2.3.3.4 &&
+patch -Np1 -i ../../../patches/clucene-2.3.3.4-contribs_lib-1.patch &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DBUILD_CONTRIBS_LIB=ON .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf clucene-core-2.3.3.4
+
+--------------------------------------------------------------------------------
+
+tar -xf libxml2-2.9.9.tar.gz && cd libxml2-2.9.9 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --with-history   \
+            --with-python=/usr/bin/python3 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libxml2-2.9.9
+
+---------------------------------------------------------------------------------
+
+tar -xf pcre-8.43.tar.bz2 && cd pcre-8.43
+./configure --prefix=/usr                     \
+            --docdir=/usr/share/doc/pcre-8.43 \
+            --enable-unicode-properties       \
+            --enable-pcre16                   \
+            --enable-pcre32                   \
+            --enable-pcregrep-libz            \
+            --enable-pcregrep-libbz2          \
+            --enable-pcretest-libreadline     \
+            --disable-static                 &&
+make -j2 &&
+make -j2 install &&
+make install                     &&
+mv -v /usr/lib/libpcre.so.* /lib &&
+ln -sfv ../../lib/$(readlink /usr/lib/libpcre.so) /usr/lib/libpcre.so &&
+cd .. && rm -rf pcre-8.43
+
+---------------------------------------------------------------------------------
+
+tar -xf dbus-glib-0.110.tar.gz && cd dbus-glib-0.110 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf dbus-glib-0.110
+
+---------------------------------------------------------------------------------
+
+tar -xf libxslt-1.1.33.tar.gz && cd libxslt-1.1.33 &&
+patch -Np1 -i ../../../patches/libxslt-1.1.33-security_fix-1.patch &&
+sed -i s/3000/5000/ libxslt/transform.c doc/xsltproc.{1,xml} &&
+./configure --prefix=/usr --disable-static                   &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libxslt-1.1.33
+
+----------------------------------------------------------------------------------
+
+tar -xf glib-2.62.2.tar.xz && cd glib-2.62.2 && 
+patch -Np1 -i ../../../patches/glib-2.62.2-skip_warnings-1.patch &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr      \
+      -Dman=true         \
+      -Dselinux=disabled \
+      ..                 &&
+ninja &&
+ninja install &&
+mkdir -p /usr/share/doc/glib-2.62.2 &&
+cp -r ../docs/reference/{NEWS,gio,glib,gobject} /usr/share/doc/glib-2.62.2 &&
+cd ../../ && rm -rf glib-2.62.2
+
+
+--------------------------------------------------------------------------------
+
+tar -xf enchant-2.2.7.tar.gz && cd enchant-2.2.7 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make install                                   &&
+rm -rf /usr/include/enchant                    &&
+ln -sfv enchant-2       /usr/include/enchant   &&
+ln -sfv enchant-2       /usr/bin/enchant       &&
+ln -sfv libenchant-2.so /usr/lib/libenchant.so &&
+ln -sfv enchant-2.pc    /usr/lib/pkgconfig/enchant.pc &&
+cd .. && rm -rf enchant-2.2.7
+
+-----------------------------------------------------------------------------------
+
+tar -xf exempi-2.5.1.tar.bz2 && cd exempi-2.5.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf exempi-2.5.1
+
+-----------------------------------------------------------------------------------
+
+tar -xf fftw-3.3.8.tar.gz && cd fftw-3.3.8 &&
+./configure --prefix=/usr    \
+            --enable-shared  \
+            --enable-threads \
+            --enable-sse2    \
+            --enable-avx     &&
+make -j2 &&
+make -j2 install 
+
+make -j2 clean &&
+./configure --prefix=/usr    \
+            --enable-shared  \
+            --enable-threads \
+            --enable-sse2    \
+            --enable-avx     \
+            --enable-float   &&
+make -j2 &&
+make -j2 install 
+
+make clean &&
+./configure --prefix=/usr    \
+            --enable-shared  \
+            --enable-threads \
+            --enable-long-double &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf fftw-3.3.8
+
+------------------------------------------------------------------------------------
+
+tar -xf libsigc++-2.10.2.tar.xz && cd libsigc++-2.10.2 &&
+sed -e '/^libdocdir =/ s/$(book_name)/libsigc++-2.10.2/' -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libsigc++-2.10.2
+
+
+
+tar -xf glibmm-2.62.0.tar.xz && cd glibmm-2.62.0 &&
+sed -e '/^libdocdir =/ s/$(book_name)/glibmm-2.62.0/' \
+    -i docs/Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf glibmm-2.62.0
+
+-------------------------------------------------------------------------------------
+
+tar -xf gmime-2.6.23.tar.xz && cd gmime-2.6.23 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gmime-2.6.23
+
+-------------------------------------------------------------------------------------
+
+tar -xf gmime-3.2.4.tar.xz && cd gmime-3.2.4 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gmime-3.2.4
+
+-------------------------------------------------------------------------------------
+
+tar -xf gobject-introspection-1.62.0.tar.xz && cd gobject-introspection-1.62.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gobject-introspection-1.62.0
+
+------------------------------------------------------------------------------------
+
+tar -xf grantlee-5.1.0.tar.gz && cd grantlee-5.1.0 &&
+patch -Np1 -i ../../../patches/grantlee-5.1.0-upstream_fixes-2.patch &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release  \
+      .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf grantlee-5.1.0
+
+------------------------------------------------------------------------------------
+
+tar -xf gsl-2.6.tar.gz && cd gsl-2.6 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gsl-2.6
+
+--------------------------------------------------------------------------------------
+
+tar -xf gspell-1.8.2.tar.xz && cd gspell-1.8.2 &&
+./configure --prefix=/usr --enable-introspection=yes --enable-vala=yes &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gspell-1.8.2
+
+---------------------------------------------------------------------------------------
+
+tar -xf icu4c-64_2-src.tgz && cd icu &&
+cd source                                    &&
+./configure --prefix=/usr                    &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf icu
+
+---------------------------------------------------------------------------------
+
+tar -xf jansson-2.12.tar.gz && cd jansson-2.12 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf jansson-2.12
+
+------------------------------------------------------------------------------------
+
+tar -xf mozjs-60.8.0.tar.bz2 && cd mozjs-60.8.0 &&
+mkdir mozjs-build &&
+cd    mozjs-build &&
+../js/src/configure --prefix=/usr       \
+                    --with-intl-api     \
+                    --with-system-zlib  \
+                    --with-system-icu   \
+                    --disable-jemalloc  \
+                    --enable-readline   &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf mozjs-60.8.0
+
+------------------------------------------------------------------------------
+
+tar -xf json-c-0.13.1.tar.gz && cd json-c-0.13.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf json-c-0.13.1
+
+-------------------------------------------------------------------------------
+
+tar -xf json-glib-1.4.4.tar.xz && cd json-glib-1.4.4 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf json-glib-1.4.4
+
+-------------------------------------------------------------------------------
+
+tar -xf keyutils-1.6.tar.bz2 && cd keyutils-1.6 &&
+make -j2 &&
+make NO_ARLIB=1 install &&
+cd .. && rm -rf keyutils-1.6
+
+-------------------------------------------------------------------------------
+
+tar -xf libaio_0.3.112.orig.tar.xz && cd libaio-0.3.112 &&
+sed -i '/install.*libaio.a/s/^/#/' src/Makefile &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libaio-0.3.112
+
+-------------------------------------------------------------------------------
+
+tar -xf libarchive-3.4.0.tar.gz && cd libarchive-3.4.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libarchive-3.4.0
+
+-------------------------------------------------------------------------------
+
+tar -xf libgpg-error-1.36.tar.bz2 && cd libgpg-error-1.36 &&
+sed -i 's/namespace/pkg_&/' src/Makefile.{am,in} src/mkstrtable.awk &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 -D README /usr/share/doc/libgpg-error-1.36/README &&
+cd .. && rm -rf libgpg-error-1.36
+
+--------------------------------------------------------------------------------
+
+tar -xf libassuan-2.5.3.tar.bz2 && cd libassuan-2.5.3 &&
+./configure --prefix=/usr &&
+make -j2                  &&
+make -C doc html          &&
+make -j2 install &&
+install -v -dm755   /usr/share/doc/libassuan-2.5.3/html &&
+install -v -m644 doc/assuan.html/* \
+                    /usr/share/doc/libassuan-2.5.3/html &&
+install -v -m644 doc/assuan_nochunks.html \
+                    /usr/share/doc/libassuan-2.5.3      &&
+cd .. && rm -rf libassuan-2.5.3
+
+---------------------------------------------------------------------------------
+
+tar -xf libatasmart-0.19.tar.xz && cd libatasmart-0.19 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make docdir=/usr/share/doc/libatasmart-0.19 install &&
+cd .. && rm -rf libatasmart-0.19
+
+--------------------------------------------------------------------------------
+
+tar -xf libatomic_ops-7.6.10.tar.gz && cd libatomic_ops-7.6.10 &&
+./configure --prefix=/usr    \
+            --enable-shared  \
+            --disable-static \
+            --docdir=/usr/share/doc/libatomic_ops-7.6.10 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libatomic_ops-7.6.10
+
+--------------------------------------------------------------------------------
+
+tar -xf libyaml-dist-0.2.2.tar.gz && cd libyaml-0.2.2 &&
+./bootstrap                                &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libyaml-0.2.2
+
+-------------------------------------------------------------------------------
+
+tar -xf libblockdev-2.22.tar.gz && cd libblockdev-2.22 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --with-python3    \
+            --without-gtk-doc \
+            --without-nvdimm  \
+            --without-dm      &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libblockdev-2.22
+
+------------------------------------------------------------------------------
+
+tar -xf pcre2-10.33.tar.bz2 && cd pcre2-10.33 &&
+./configure --prefix=/usr                       \
+            --docdir=/usr/share/doc/pcre2-10.33 \
+            --enable-unicode                    \
+            --enable-jit                        \
+            --enable-pcre2-16                   \
+            --enable-pcre2-32                   \
+            --enable-pcre2grep-libz             \
+            --enable-pcre2grep-libbz2           \
+            --enable-pcre2test-libreadline      \
+	    --enable-jit                        \
+            --disable-static                    &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf pcre2-10.33
+
+--------------------------------------------------------------------------------
+
+tar -xf libbytesize-2.1.tar.gz && cd libbytesize-2.1 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libbytesize-2.1
+
+--------------------------------------------------------------------------------
+
+tar -xf libcroco-0.6.13.tar.xz && cd libcroco-0.6.13 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libcroco-0.6.13
+
+---------------------------------------------------------------------------------
+
+tar -xf libdaemon-0.14.tar.gz && cd libdaemon-0.14 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make docdir=/usr/share/doc/libdaemon-0.14 install &&
+cd .. && rm -rf libdaemon-0.14
+
+----------------------------------------------------------------------------------
+
+tar -xf libesmtp-1.0.6.tar.bz2 && cd libesmtp-1.0.6 &&
+sed 's@SSL_library_init@SSL_new@g' -i configure.ac &&
+autoreconf -fi &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libesmtp-1.0.6
+
+----------------------------------------------------------------------------------
+
+tar -xf libgcrypt-1.8.4.tar.bz2 && cd libgcrypt-1.8.4 &&
+./configure --prefix=/usr &&
+make -j2                  &&
+make -C doc html          &&
+make install &&
+install -v -dm755   /usr/share/doc/libgcrypt-1.8.5 &&
+install -v -m644    README doc/{README.apichanges,fips*,libgcrypt*} \
+                    /usr/share/doc/libgcrypt-1.8.5      &&
+install -v -dm755   /usr/share/doc/libgcrypt-1.8.5/html &&
+install -v -m644 doc/gcrypt.html/* \
+                    /usr/share/doc/libgcrypt-1.8.5/html &&
+cd .. && rm -rf libgcrypt-1.8.4
+
+------------------------------------------------------------------------------------
+
+tar -xf libusb-1.0.22.tar.bz2 && cd libusb-1.0.22 &&
+sed -i "s/^PROJECT_LOGO/#&/" doc/doxygen.cfg.in &&
+./configure --prefix=/usr --disable-static &&
+make -j1 &&
+make install &&
+cd .. && rm -rf libusb-1.0.22
+
+-------------------------------------------------------------------------------------
+
+tar -xf libpsl-0.21.0.tar.gz && cd libpsl-0.21.0 &&
+sed -i 's/env python/&3/' src/psl-make-dafsa &&
+./configure --prefix=/usr --disable-static       &&
+make -j2 && 
+make -j2 install &&
+cd .. && rm -rf libpsl-0.21.0
+
+-------------------------------------------------------------------------------------
+
+tar -xf libgrss-0.7.0.tar.xz && cd libgrss-0.7.0 &&
+patch -Np1 -i ../../../patches/libgrss-0.7.0-bugfixes-1.patch &&
+autoreconf -fiv &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libgrss-0.7.0
+
+-------------------------------------------------------------------------------------
+
+**RECOMMENDED: Reinstall after Xorg Libraries to build gsf-office-thumbnailer
+
+tar -xf libgsf-1.14.46.tar.xz && cd libgsf-1.14.46 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libgsf-1.14.46
+
+-------------------------------------------------------------------------------------
+
+tar -xf libgudev-233.tar.xz && cd libgudev-233 &&
+./configure --prefix=/usr --disable-umockdev &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libgudev-233
+
+-------------------------------------------------------------------------------------
+
+tar -xf libgusb-0.3.0.tar.xz && cd libgusb-0.3.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Ddocs=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libgusb-0.3.0
+
+-------------------------------------------------------------------------------------
+
+tar -xf libical-3.0.6.tar.gz && cd libical-3.0.6 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr  \
+      -DCMAKE_BUILD_TYPE=Release   \
+      -DSHARED_ONLY=yes            \
+      -DICAL_BUILD_DOCS=false      \
+      -DGOBJECT_INTROSPECTION=true \
+      -DICAL_GLIB_VAPI=true        \
+      .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf libical-3.0.6
+
+--------------------------------------------------------------------------------------
+
+tar -xf libidn-1.35.tar.gz && cd libidn-1.35 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+find doc -name "Makefile*" -delete            &&
+rm -rf -v doc/{gdoc,idn.1,stamp-vti,man,texi} &&
+mkdir -v       /usr/share/doc/libidn-1.35     &&
+cp -r -v doc/* /usr/share/doc/libidn-1.35     &&
+cd .. && rm -rf libidn-1.35
+
+------------------------------------------------------------------------------------
+
+tar -xf libunistring-0.9.10.tar.xz && cd libunistring-0.9.10 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/libunistring-0.9.10 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libunistring-0.9.10
+
+------------------------------------------------------------------------------------
+
+tar -xf libidn2-2.2.0.tar.gz && cd libidn2-2.2.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libidn2-2.2.0
+
+----------------------------------------------------------------------------------------
+
+tar -xf libiodbc-3.52.12.tar.gz && cd libiodbc-3.52.12 &&
+./configure --prefix=/usr                   \
+            --with-iodbc-inidir=/etc/iodbc  \
+            --includedir=/usr/include/iodbc \
+            --disable-libodbc               \
+            --disable-static                &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libiodbc-3.52.12
+
+---------------------------------------------------------------------------------------
+
+tar -xf libunique-1.1.6.tar.bz2 && cd libunique-1.1.6 &&
+patch -Np1 -i ../../../patches/libunique-1.1.6-upstream_fixes-1.patch &&
+autoreconf -fi &&
+./configure --prefix=/usr  \
+            --disable-dbus \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libunique-1.1.6
+
+--------------------------------------------------------------------------------------
+
+tar -xf libksba-1.3.5.tar.bz2 && cd libksba-1.3.5 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libksba-1.3.5
+
+------------------------------------------------------------------------------------
+
+tar -xf liblinear-230.tar.gz && cd liblinear-230 &&
+make lib &&
+install -vm644 linear.h /usr/include &&
+install -vm755 liblinear.so.3 /usr/lib &&
+ln -sfv liblinear.so.3 /usr/lib/liblinear.so &&
+cd .. && rm -rf liblinear-230
+
+------------------------------------------------------------------------------------
+
+tar -xf libmbim-1.20.0.tar.xz && cd libmbim-1.20.0 &&
+./configure --prefix=/usr --disable-static --enable-gtk-doc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libmbim-1.20.0
+
+------------------------------------------------------------------------------------
+
+tar -xf libnfsidmap-0.26.tar.bz2 && cd libnfsidmap-0.26 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  &&
+make -j2 &&
+make -j2 install                         &&
+mv -v /usr/lib/libnfsidmap.so.* /lib &&
+ln -sfv ../../lib/$(readlink /usr/lib/libnfsidmap.so) /usr/lib/libnfsidmap.so &&
+cd .. && rm -rf libnfsidmap-0.26
+
+------------------------------------------------------------------------------------
+
+tar -xf libqmi-1.24.0.tar.xz && cd libqmi-1.24.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libqmi-1.24.0
+
+-------------------------------------------------------------------------------------
+
+tar -xf libpaper_1.1.24+nmu5.tar.gz && cd libpaper-1.1.24+nmu5 &&
+autoreconf -fi                &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+mkdir -vp /etc/libpaper.d 
+cd .. && rm -rf libpaper-1.1.24+nmu5 
+
+------------------------------------------------------------------------------------- 
+
+tar -xf libseccomp-2.4.1.tar.gz && cd libseccomp-2.4.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 && 
+make -j2 install &&
+cd .. && rm -rf libseccomp-2.4.1
+
+-------------------------------------------------------------------------------------
+
+tar -xf libsigsegv-2.12.tar.gz && cd libsigsegv-2.12 &&
+./configure --prefix=/usr   \
+            --enable-shared \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libsigsegv-2.12
+
+-------------------------------------------------------------------------------------
+
+tar -xf libssh2-1.9.0.tar.gz && cd libssh2-1.9.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libssh2-1.9.0
+
+--------------------------------------------------------------------------------------
+
+tar -xf libstatgrab-0.92.tar.gz && cd libstatgrab-0.92 &&
+./configure --prefix=/usr   \
+            --disable-static \
+            --docdir=/usr/share/doc/libstatgrab-0.92 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libstatgrab-0.92
+
+--------------------------------------------------------------------------------------
+
+tar -xf libuv-v1.33.1.tar.gz && cd libuv-v1.33.1 &&
+sh autogen.sh                              &&
+./configure --prefix=/usr --disable-static &&
+make -j1 &&
+make -j2 install &&
+cd .. && rm -rf libuv-v1.33.1
+
+--------------------------------------------------------------------------------------
+
+tar -xf libxkbcommon-0.8.4.tar.xz && cd libxkbcommon-0.8.4 &&
+./configure $XORG_CONFIG     \
+            --docdir=/usr/share/doc/libxkbcommon-0.8.4 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libxkbcommon-0.8.4
+
+--------------------------------------------------------------------------------------
+
+tar -xf libwacom-0.29.tar.bz2 && cd libwacom-0.29 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libwacom-0.29
+
+--------------------------------------------------------------------------------------
+
+tar -xf lzo-2.10.tar.gz && cd lzo-2.10 &&
+./configure --prefix=/usr                    \
+            --enable-shared                  \
+            --disable-static                 \
+            --docdir=/usr/share/doc/lzo-2.10 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf lzo-2.10
+
+--------------------------------------------------------------------------------------
+
+tar -xf mtdev-1.1.5.tar.bz2 && cd mtdev-1.1.5 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf mtdev-1.1.5
+
+--------------------------------------------------------------------------------------
+
+tar -xf node-v10.16.3.tar.xz && cd node-v10.16.3 &&
+./configure --prefix=/usr                  \
+            --shared-cares                 \
+            --shared-libuv                 \
+            --shared-nghttp2               \
+            --shared-openssl               \
+            --shared-zlib                  \
+            --with-intl=system-icu         &&
+make -j2 &&
+make -j2 install &&
+ln -sf node /usr/share/doc/node-10.16.3 &&
+cd .. && rm -rf node-v10.16.3
+
+------------------------------------------------------------------------------------
+
+tar -xf npth-1.6.tar.bz2 && cd npth-1.6 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf npth-1.6
+
+-----------------------------------------------------------------------------------
+
+tar -xf nspr-4.22.tar.gz && cd nspr-4.22 &&
+cd nspr                                                     &&
+sed -ri 's#^(RELEASE_BINS =).*#\1#' pr/src/misc/Makefile.in &&
+sed -i 's#$(LIBRARY) ##'            config/rules.mk         &&
+./configure --prefix=/usr \
+            --with-mozilla \
+            --with-pthreads \
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit) &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf nspr-4.22
+
+-----------------------------------------------------------------------------------
+
+tar -xf popt-1.16.tar.gz && cd popt-1.16 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf popt-1.16
+
+-----------------------------------------------------------------------------------
+
+tar -xf pth-2.0.7.tar.gz && cd pth-2.0.7 &&
+sed -i 's#$(LOBJS): Makefile#$(LOBJS): pth_p.h Makefile#' Makefile.in &&
+./configure --prefix=/usr           \
+            --disable-static        \
+            --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/pth-2.0.7 &&
+install -v -m644    README PORTING SUPPORT TESTS \
+                    /usr/share/doc/pth-2.0.7 &&
+cd .. && rm -rf pth-2.0.7
+
+-----------------------------------------------------------------------------------
+
+tar -xf ptlib-2.10.11.tar.xz && cd ptlib-2.10.11 &&
+sed -i "s/sbin\.Right(1) == '\\\\0')/strlen(sbin\.Right(1)) == 0)/" \
+    src/ptclib/podbc.cxx &&
+sed -i '/\/ioctl.h/a#include <sys/uio.h>' src/ptlib/unix/channel.cxx &&
+patch -Np1 -i ../../../patches/ptlib-2.10.11-openssl-1.1.0-1.patch &&
+patch -Np1 -i ../../../patches/ptlib-2.10.11-bison_fixes-2.patch &&
+./configure --prefix=/usr  \
+            --disable-odbc &&
+make -j2 &&
+make -j2 install &&
+chmod -v 755 /usr/lib/libpt.so.2.10.11 &&
+cd .. && rm -rf ptlib-2.10.11
+
+-----------------------------------------------------------------------------------
+
+tar -xf qca-2.2.1.tar.xz && cd qca-2.2.1 &&
+sed -i 's@cert.pem@certs/ca-bundle.crt@' CMakeLists.txt &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=$QT5DIR            \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DQCA_MAN_INSTALL_DIR:PATH=/usr/share/man \
+      .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf qca-2.2.1
+
+----------------------------------------------------------------------------------
+
+tar -xf talloc-2.2.0.tar.gz && cd talloc-2.2.0 && 
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf talloc-2.2.0
+
+---------------------------------------------------------------------------------
+
+tar -xf telepathy-glib-0.24.1.tar.gz && cd telepathy-glib-0.24.1 &&
+./configure --prefix=/usr          \
+            --enable-vala-bindings \
+            --disable-static       &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf telepathy-glib-0.24.1
+
+--------------------------------------------------------------------------------
+
+tar -xf wayland-1.17.0.tar.xz && cd wayland-1.17.0 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --disable-documentation &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf wayland-1.17.0
+
+---------------------------------------------------------------------------------
+
+tar -xf wayland-protocols-1.18.tar.xz && cd wayland-protocols-1.18 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf wayland-protocols-1.18
+
+---------------------------------------------------------------------------------
+
+tar -xf wv-1.2.9.tar.gz && cd wv-1.2.9 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf wv-1.2.9
+
+---------------------------------------------------------------------------------
+
+tar -xf xapian-core-1.4.12.tar.xz && cd xapian-core-1.4.12 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/xapian-core-1.4.12 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xapian-core-1.4.12
+
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

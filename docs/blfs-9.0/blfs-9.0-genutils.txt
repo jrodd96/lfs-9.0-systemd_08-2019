@@ -1,0 +1,283 @@
+******* GENERAL UTILITIES ****************************************************
+------------------------------------------------------------------------------
+
+tar -xf desktop-file-utils-0.24.tar.xz && cd desktop-file-utils-0.24 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf desktop-file-utils-0.24
+
+------------------------------------------------------------------------------
+
+tar -xf shared-mime-info-1.14.tar.xz && cd shared-mime-info-1.14 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf shared-mime-info-1.14
+
+------------------------------------------------------------------------------
+
+tar -xf iso-codes-4.4.tar.xz && cd iso-codes-4.4 &&
+./configure --prefix=/usr &&
+sed -i '/^LN_S/s/s/sfvn/' */Makefile &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf iso-codes-4.4
+
+------------------------------------------------------------------------------
+
+tar -xf gtk-doc-1.32.tar.xz && cd gtk-doc-1.32 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gtk-doc-1.32
+
+-------------------------------------------------------------------------------
+
+tar -xf asciidoc-8.6.9.tar.gz && cd asciidoc-8.6.9 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --docdir=/usr/share/doc/asciidoc-8.6.9 &&
+make -j2 &&
+make -j2 install &&
+make docs &&
+cd .. && rm -rf asciidoc-8.6.9
+
+-------------------------------------------------------------------------------
+
+tar -xf bogofilter-1.2.4.tar.gz && cd bogofilter-1.2.4 &&
+./configure --prefix=/usr --sysconfdir=/etc/bogofilter &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf bogofilter-1.2.4
+
+-------------------------------------------------------------------------------
+
+tar -xf compface-1.5.2.tar.gz && cd compface-1.5.2 &&
+./configure --prefix=/usr --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+install -m755 -v xbm2xface.pl /usr/bin &&
+cd .. && rm -rf compface-1.5.2
+
+-------------------------------------------------------------------------------
+
+tar -xf hd2u-1.0.4.tgz && cd hd2u-1.0.4 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf hd2u-1.0.4
+
+-------------------------------------------------------------------------------
+
+tar -xf highlight-3.53.tar.bz2 && cd highlight-3.53 &&
+sed -i '/GZIP/s/^/#/' makefile &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf highlight-3.53
+
+-------------------------------------------------------------------------------
+
+tar -xf ibus-1.5.21.tar.gz && cd ibus-1.5.21 &&
+mkdir -p               /usr/share/unicode/ucd &&
+unzip -u ../UCD.zip -d /usr/share/unicode/ucd &&
+sed -i 's@/desktop/ibus@/org/freedesktop/ibus@g' \
+    data/dconf/org.freedesktop.ibus.gschema.xml &&
+./configure --prefix=/usr             \
+            --sysconfdir=/etc         \
+            --disable-emoji-dict      \
+            --enable-wayland          \
+            --enable-python-library   \
+	    --with-python=python3 --enable-introspection=yes --enable-wayland     && 
+rm -f tools/main.c                    &&
+make -j1 &&
+make install &&
+cd .. && rm -rf ibus-1.5.21
+
+-------------------------------------------------------------------------------
+
+tar -xf ImageMagick-6.9.10-60.tar.xz && cd ImageMagick-6.9.10-60 &&
+patch -Np1 -i ../../../patches/ImageMagick-6.9.10-60-libs_only-1.patch &&
+autoreconf -fi                                           &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --enable-hdri     \
+            --with-modules    \
+	    --with-gvc        \
+	    --with-rsvg       \
+            --disable-static  &&
+make -j2 &&
+make DOCUMENTATION_PATH=/usr/share/doc/imagemagick-6.9.10 install-libs-only &&
+cd .. && rm -rf ImageMagick-6.9.10-60
+
+-------------------------------------------------------------------------------
+
+tar -xf ImageMagick-7.0.8-68.tar.xz && cd ImageMagick-7.0.8-68 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --enable-hdri     \
+            --with-modules    \
+            --with-perl       \
+            --with-gvc        \
+	    --with-rsvg       \
+	    --with-dejavu-font-dir=/usr/share/fonts/dejavu \
+            --disable-static  &&
+make -j2 &&
+make DOCUMENTATION_PATH=/usr/share/doc/imagemagick-7.0.8 install &&
+cd .. && rm -rf ImageMagick-7.0.8-68
+
+-------------------------------------------------------------------------------
+
+tar -xf lsof_4.91.tar.gz && cd lsof_4.91 &&
+tar -xf lsof_4.91_src.tar   &&
+cd lsof_4.91_src            &&
+./Configure -n linux        &&
+make CFGL="-L./lib -ltirpc" &&
+install -v -m0755 -o root -g root lsof /usr/bin &&
+install -v lsof.8 /usr/share/man/man8 &&
+cd ../../ && rm -rf lsof_4.91
+
+-------------------------------------------------------------------------------
+
+tar -xf pinentry-1.1.0.tar.bz2 && cd pinentry-1.1.0 &&
+./configure --prefix=/usr --enable-pinentry-tty &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf pinentry-1.1.0
+
+-------------------------------------------------------------------------------
+
+tar -xf rarian-0.8.1.tar.bz2 && cd rarian-0.8.1 &&
+./configure --prefix=/usr        \
+            --disable-static     \
+            --localstatedir=/var &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf rarian-0.8.1
+
+-------------------------------------------------------------------------------
+
+tar -xf rep-gtk_0.90.8.3.tar.xz && cd rep-gtk_0.90.8.3 &&
+./autogen.sh --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf rep-gtk_0.90.8.3
+
+-------------------------------------------------------------------------------
+
+tar -xf screen-4.7.0.tar.gz && cd screen-4.7.0 &&
+./configure --prefix=/usr                     \
+            --infodir=/usr/share/info         \
+            --mandir=/usr/share/man           \
+            --with-socket-dir=/run/screen     \
+            --with-pty-group=5                \
+            --with-sys-screenrc=/etc/screenrc &&
+
+sed -i -e "s%/usr/local/etc/screenrc%/etc/screenrc%" {etc,doc}/* &&
+make -j2 &&
+make -j2 install &&
+install -m 644 etc/etcscreenrc /etc/screenrc  &&
+cd .. && rm -rf screen-4.7.0
+
+-------------------------------------------------------------------------------
+
+tar -xf sharutils-4.15.2.tar.xz && cd sharutils-4.15.2 &&
+sed -i 's/IO_ftrylockfile/IO_EOF_SEEN/' lib/*.c        &&
+echo "#define _IO_IN_BACKUP 0x100" >> lib/stdio-impl.h &&
+
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf sharutils-4.15.2
+
+-------------------------------------------------------------------------------
+
+tar -xf telepathy-logger-0.8.2.tar.bz2 && cd telepathy-logger-0.8.2 &&
+sed 's@/apps/@/org/freedesktop/@' \
+    -i data/org.freedesktop.Telepathy.Logger.gschema.xml.in &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf telepathy-logger-0.8.2
+
+------------------------------------------------------------------------------
+
+tar -xf telepathy-mission-control-5.16.4.tar.gz && cd telepathy-mission-control-5.16.4 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf telepathy-mission-control-5.16.4
+
+-------------------------------------------------------------------------------
+
+tar -xf tidy-html5-5.6.0.tar.gz && cd tidy-html5-5.6.0
+cd build/cmake &&
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release  \
+      -DBUILD_TAB2SPACE=ON        \
+      ../..    &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 tab2space /usr/bin &&
+cd ../../ && rm -rf tidy-html5-5.6.0
+
+-------------------------------------------------------------------------------
+
+tar -xf time-1.9.tar.gz && cd time-1.9 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf time-1.9
+
+-------------------------------------------------------------------------------
+
+tar -xf tree-1.8.0.tgz && cd tree-1.8.0 &&
+make -j2 &&
+make MANDIR=/usr/share/man/man1 install &&
+chmod -v 644 /usr/share/man/man1/tree.1 &&
+cd .. && rm -rf tree-1.8.0
+
+-------------------------------------------------------------------------------
+
+tar -xf unixODBC-2.3.7.tar.gz && cd unixODBC-2.3.7 &&
+./configure --prefix=/usr \
+            --sysconfdir=/etc/unixODBC &&
+make -j2 &&
+make -j2 install &&
+find doc -name "Makefile*" -delete                &&
+chmod 644 doc/{lst,ProgrammerManual/Tutorial}/*   &&
+
+install -v -m755 -d /usr/share/doc/unixODBC-2.3.7 &&
+cp      -v -R doc/* /usr/share/doc/unixODBC-2.3.7 &&
+cd .. && rm -rf unixODBC-2.3.7
+
+-------------------------------------------------------------------------------
+
+tar -xf xdg-user-dirs-0.17.tar.gz && cd xdg-user-dirs-0.17 &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf xdg-user-dirs-0.17
+
+-------------------------------------------------------------------------------
+
+**I DONT FUCKING KNOW
+
+tar -xf graphviz-2.42.3.tar.gz && cd graphviz-2.42.3 &&
+sed -i '/LIBPOSTFIX="64"/s/64//' configure.ac &&
+autoreconf                &&
+./configure --prefix=/usr --with-javaincludedir="$JAVA_HOME/include -I$JAVA_HOME/include/linux" --with-webp &&
+make -j1 &&
+make install &&
+ln -v -s /usr/share/graphviz/doc \
+         /usr/share/doc/graphviz-2.42.3 &&
+cd .. && rm -rf graphviz-2.42.3
+
+-------------------------------------------------------------------------------
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+************ DATABASES ********************************************
+-------------------------------------------------------------------
+
+tar -xf sqlite-autoconf-3300000.tar.gz && cd sqlite-autoconf-3300000 &&
+unzip -q ../sqlite-doc-3300000.zip &&
+./configure --prefix=/usr     \
+            --disable-static  \
+            --enable-fts5     \
+            CFLAGS="-g -O2                    \
+            -DSQLITE_ENABLE_FTS3=1            \
+            -DSQLITE_ENABLE_FTS4=1            \
+            -DSQLITE_ENABLE_COLUMN_METADATA=1 \
+            -DSQLITE_ENABLE_UNLOCK_NOTIFY=1   \
+            -DSQLITE_ENABLE_DBSTAT_VTAB=1     \
+            -DSQLITE_SECURE_DELETE=1          \
+            -DSQLITE_ENABLE_FTS3_TOKENIZER=1" &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf sqlite-autoconf-3300000
+
+-------------------------------------------------------------------
+
+tar -xf LMDB_0.9.24.tar.gz && cd lmdb-LMDB_0.9.24 &&
+cd libraries/liblmdb &&
+make -j2               &&
+sed -i 's| liblmdb.a||' Makefile &&
+make prefix=/usr install &&
+cd .. && rm -rf lmdb-LMDB_0.9.24
+
+-------------------------------------------------------------------
+
+tar -xf postgresql-12.0.tar.bz2 && cd postgresql-12.0 &&
+sed -i '/DEFAULT_PGSOCKET_DIR/s@/tmp@/run/postgresql@' src/include/pg_config_manual.h &&
+./configure --prefix=/usr          \
+            --enable-thread-safety \
+            --docdir=/usr/share/doc/postgresql-12.0 --with-systemd --with-openssl --with-ldap --with-python --with-icu &&
+make -j2 &&
+make -j2 install &&
+make install-docs &&
+install -v -dm700 /srv/pgsql/data &&
+install -v -dm755 /run/postgresql &&
+chown -Rv postgres:postgres /srv/pgsql /run/postgresql &&
+su - postgres -c '/usr/bin/initdb -D /srv/pgsql/data' &&
+cd .. && rm -rf postgresql-12.0
+
+-------------------------------------------------------------------

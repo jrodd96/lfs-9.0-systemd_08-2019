@@ -1,0 +1,719 @@
+******* SERVERS **************************************************************
+-----------------------------------------------------------------------------
+
+tar -xf httpd-2.4.41.tar.bz2 && cd httpd-2.4.41 &&
+patch -Np1 -i ../../../patches/httpd-2.4.41-blfs_layout-1.patch             &&
+sed '/dir.*CFG_PREFIX/s@^@#@' -i support/apxs.in              &&
+./configure --enable-authnz-fcgi                              \
+            --enable-layout=BLFS                              \
+            --enable-mods-shared="all cgi"                    \
+            --enable-mpms-shared=all                          \
+            --enable-suexec=shared                            \
+            --with-apr=/usr/bin/apr-1-config                  \
+            --with-apr-util=/usr/bin/apu-1-config             \
+            --with-suexec-bin=/usr/lib/httpd/suexec           \
+            --with-suexec-caller=apache                       \
+            --with-suexec-docroot=/srv/www                    \
+            --with-suexec-logfile=/var/log/httpd/suexec.log   \
+            --with-suexec-uidmin=100                          \
+            --with-suexec-userdir=public_html                 &&
+make -j2 &&
+make -j2 install &&
+mv -v /usr/sbin/suexec /usr/lib/httpd/suexec &&
+chgrp apache           /usr/lib/httpd/suexec &&
+chmod 4754             /usr/lib/httpd/suexec &&
+chown -v -R apache:apache /srv/www           &&
+cd .. && rm -rf httpd-2.4.41
+
+-----------------------------------------------------------------------------
+
+tar -xf openldap-2.4.48.tgz && cd openldap-2.4.48 &&
+patch -Np1 -i ../../../patches/openldap-2.4.48-consolidated-1.patch &&
+autoconf &&
+
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  \
+            --enable-dynamic  \
+            --disable-debug   \
+            --disable-slapd &&
+
+make depend &&
+make -j2 &&
+make -j2 install &&
+ln -sf ../lib/slapd /usr/sbin/slapd &&
+cd .. && rm -rf openldap-2.4.48
+
+sed -e "s/\.la/.so/" -i /etc/openldap/slapd.{conf,ldif}{,.default} &&
+install -v -dm700 -o ldap -g ldap /var/lib/openldap     &&
+install -v -dm700 -o ldap -g ldap /etc/openldap/slapd.d &&
+chmod   -v    640     /etc/openldap/slapd.{conf,ldif}   &&
+chown   -v  root:ldap /etc/openldap/slapd.{conf,ldif}   &&
+install -v -dm755 /usr/share/doc/openldap-2.4.48 &&
+cp      -vfr      doc/{drafts,rfc,guide} \
+                  /usr/share/doc/openldap-2.4.48        &&
+cd .. && rm -rf openldap-2.4.48
+
+-----------------------------------------------------------------------------
+
+tar -xf LMDB_0.9.24.tar.gz && cd lmdb-LMDB_0.9.24 &&
+cd libraries/liblmdb &&
+make                 &&
+sed -i 's| liblmdb.a||' Makefile &&
+make prefix=/usr install &&
+cd .. && rm -rf lmdb-LMDB_0.9.24
+
+-------------------------------------------------------------------------------
+
+tar -xf unbound-1.9.3.tar.gz && cd unbound-1.9.3 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  \
+            --with-pidfile=/run/unbound.pid &&
+make -j2 &&
+make doc &&
+make -j2 install &&
+mv -v /usr/sbin/unbound-host /usr/bin/ &&
+install -v -m755 -d /usr/share/doc/unbound-1.9.3 &&
+install -v -m644 doc/html/* /usr/share/doc/unbound-1.9.3 &&
+cd .. && rm -rf unbound-1.9.3
+
+-------------------------------------------------------------------------------
+
+**MUST RUN "MAKE" AS UNPRIVILEGED USER & "INSTALL" AS ROOT**
+
+tar -xf vsftpd-3.0.3.tar.gz && cd vsftpd-3.0.3 &&
+install -v -d -m 0755 /usr/share/vsftpd/empty &&
+install -v -d -m 0755 /home/ftp               &&
+groupadd -g 47 vsftpd                         &&
+groupadd -g 45 ftp                            &&
+useradd -c "vsftpd User"  -d /dev/null -g vsftpd -s /bin/false -u 47 vsftpd &&
+useradd -c anonymous_user -d /home/ftp -g ftp    -s /bin/false -u 45 ftp    &&
+make -j2 &&
+install -v -m 755 vsftpd        /usr/sbin/vsftpd    &&
+install -v -m 644 vsftpd.8      /usr/share/man/man8 &&
+install -v -m 644 vsftpd.conf.5 /usr/share/man/man5 &&
+install -v -m 644 vsftpd.conf   /etc                &&
+cd .. && rm -rf vsftpd-3.0.3
+
+
+******* PROGRAMMING **********************************************************
+------------------------------------------------------------------------------
+
+tar -xf git-2.23.0.tar.xz && cd git-2.23.0 &&
+./configure --prefix=/usr --with-gitconfig=/etc/gitconfig --with-libpcre2 &&
+make -j2 &&
+make -j2 install &&
+tar -xf ../git-manpages-2.20.1.tar.xz \
+    -C /usr/share/man --no-same-owner --no-overwrite-dir &&
+mkdir -vp   /usr/share/doc/git-2.23.0 &&
+tar   -xf   ../git-htmldocs-2.20.1.tar.xz \
+      -C    /usr/share/doc/git-2.23.0 --no-same-owner --no-overwrite-dir &&
+find        /usr/share/doc/git-2.23.0 -type d -exec chmod 755 {} \; &&
+find        /usr/share/doc/git-2.23.0 -type f -exec chmod 644 {} \; &&
+cd .. && rm -rf git-2.23.0
+
+---------------------------------------------------------------------------------
+
+tar -xf gdb-8.3.1.tar.xz && cd gdb-8.3.1 &&
+./configure --prefix=/usr \
+            --with-system-readline \
+            --with-python=/usr/bin/python3 &&
+make -j2 &&
+make -C gdb/doc doxy &&
+make -C gdb install &&
+install -d /usr/share/doc/gdb-8.3.1 &&
+rm -rf gdb/doc/doxy/xml &&
+cp -Rv gdb/doc/doxy /usr/share/doc/gdb-8.3.1 &&
+cd .. && rm -rf gdb-8.3.1
+
+---------------------------------------------------------------------------------
+
+tar -xf vala-0.46.3.tar.xz && cd vala-0.46.3 &&
+./configure --prefix=/usr --disable-valadoc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf vala-0.46.3
+
+--------------------------------------------------------------------------------
+
+tar -xf swig-4.0.1.tar.gz && cd swig-4.0.1 &&
+./configure --prefix=/usr \
+            --without-maximum-compile-warnings &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/swig-4.0.1 &&
+cp -v -R Doc/* /usr/share/doc/swig-4.0.1 &&
+cd .. && rm -rf swig-4.0.1 
+
+--------------------------------------------------------------------------------
+
+tar -xf cmake-3.15.2.tar.gz && cd cmake-3.15.2 &&
+sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake &&
+./bootstrap --prefix=/usr        \
+            --system-libs        \
+            --mandir=/share/man  \
+            --no-system-jsoncpp  \
+            --no-system-librhash \
+            --docdir=/share/doc/cmake-3.15.2 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cmake-3.15.2
+
+--------------------------------------------------------------------------------
+
+tar -xf nasm-2.14.02.tar.xz && cd nasm-2.14.02 &&
+tar -xf ../nasm-2.14.02-xdoc.tar.xz --strip-components=1 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+install -m755 -d         /usr/share/doc/nasm-2.14.02/html  &&
+cp -v doc/html/*.html    /usr/share/doc/nasm-2.14.02/html  &&
+cp -v doc/*.{txt,ps,pdf} /usr/share/doc/nasm-2.14.02       &&
+cd .. && rm -rf nasm-2.14.02
+
+--------------------------------------------------------------------------------
+
+tar -xf slang-2.3.2.tar.bz2 && cd slang-2.3.2 &&
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --with-readline=gnu &&
+make -j1 &&
+make install_doc_dir=/usr/share/doc/slang-2.3.2   \
+     SLSH_DOC_DIR=/usr/share/doc/slang-2.3.2/slsh \
+     install-all &&
+chmod -v 755 /usr/lib/libslang.so.2.3.2 \
+             /usr/lib/slang/v2/modules/*.so &&
+cd .. && rm -rf slang-2.3.2
+
+------------------------------------------------------------------------------
+
+tar -xf tcl8.6.9-src.tar.gz && cd tcl8.6.9 &&
+export SRCDIR=`pwd` &&
+cd unix &&
+./configure --prefix=/usr           \
+            --mandir=/usr/share/man \
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit) &&
+make -j2 &&
+sed -e "s#$SRCDIR/unix#/usr/lib#" \
+    -e "s#$SRCDIR#/usr/include#"  \
+    -i tclConfig.sh               &&
+sed -e "s#$SRCDIR/unix/pkgs/tdbc1.1.0#/usr/lib/tdbc1.1.0#" \
+    -e "s#$SRCDIR/pkgs/tdbc1.1.0/generic#/usr/include#"    \
+    -e "s#$SRCDIR/pkgs/tdbc1.1.0/library#/usr/lib/tcl8.6#" \
+    -e "s#$SRCDIR/pkgs/tdbc1.1.0#/usr/include#"            \
+    -i pkgs/tdbc1.1.0/tdbcConfig.sh                        &&
+sed -e "s#$SRCDIR/unix/pkgs/itcl4.1.2#/usr/lib/itcl4.1.2#" \
+    -e "s#$SRCDIR/pkgs/itcl4.1.2/generic#/usr/include#"    \
+    -e "s#$SRCDIR/pkgs/itcl4.1.2#/usr/include#"            \
+    -i pkgs/itcl4.1.2/itclConfig.sh                        &&
+unset SRCDIR                                               &&
+make -j2 install &&
+make install-private-headers &&
+ln -v -sf tclsh8.6 /usr/bin/tclsh &&
+chmod -v 755 /usr/lib/libtcl8.6.so &&
+cd ../../ && rm -rf tcl8.6.9
+
+----------------------------------------------------------------------------
+
+tar -xf llvm-8.0.1.src.tar.xz && cd llvm-8.0.1.src &&
+tar -xf ../cfe-8.0.1.src.tar.xz -C tools &&
+tar -xf ../compiler-rt-8.0.1.src.tar.xz -C projects &&
+mv tools/cfe-8.0.1.src tools/clang &&
+mv projects/compiler-rt-8.0.1.src projects/compiler-rt &&
+mkdir -v build &&
+cd       build &&
+CC=gcc CXX=g++                                  \
+cmake -DCMAKE_INSTALL_PREFIX=/usr               \
+      -DLLVM_ENABLE_FFI=ON                      \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DLLVM_BUILD_LLVM_DYLIB=ON                \
+      -DLLVM_LINK_LLVM_DYLIB=ON                 \
+      -DLLVM_ENABLE_RTTI=ON                     \
+      -DLLVM_TARGETS_TO_BUILD="host;AMDGPU;BPF" \
+      -DLLVM_BUILD_TESTS=ON                     \
+      -Wno-dev -G Ninja ..                      &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf llvm-8.0.1.src
+------------------------------------------------------------------------------
+
+tar -xf doxygen-1.8.16.src.tar.gz && cd doxygen-1.8.16 &&
+mkdir -v build &&
+cd       build &&
+cmake -G "Unix Makefiles"         \
+      -DCMAKE_BUILD_TYPE=Release  \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -Duse_libclang=OFF           \
+      -Wno-dev .. &&
+make -j2 &&
+make -j2 install &&
+install -vm644 ../doc/*.1 /usr/share/man/man1 &&
+cd ../../ && rm -rf doxygen-1.8.16
+
+------------------------------------------------------------------------------
+
+tar -xf Python-2.7.17.tar.xz && cd Python-2.7.17 &&
+./configure --prefix=/usr       \
+            --enable-shared     \
+            --with-system-expat \
+            --with-system-ffi   \
+            --with-ensurepip=yes \
+            --enable-unicode=ucs4 &&
+make -j2 &&
+make -j2 install &&
+chmod -v 755 /usr/lib/libpython2.7.so.1.0 &&
+cd .. && rm -rf Python-2.7.17
+python3 -m pip install --force pip
+
+------------------------------------------------------------------------------
+
+tar -xf lua-5.3.5.tar.gz && cd lua-5.3.5 &&
+cat > lua.pc << "EOF"
+V=5.3
+R=5.3.5
+
+prefix=/usr
+INSTALL_BIN=${prefix}/bin
+INSTALL_INC=${prefix}/include
+INSTALL_LIB=${prefix}/lib
+INSTALL_MAN=${prefix}/share/man/man1
+INSTALL_LMOD=${prefix}/share/lua/${V}
+INSTALL_CMOD=${prefix}/lib/lua/${V}
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Lua
+Description: An Extensible Extension Language
+Version: ${R}
+Requires:
+Libs: -L${libdir} -llua -lm -ldl
+Cflags: -I${includedir}
+EOF 
+patch -Np1 -i ../../../patches/lua-5.3.5-shared_library-1.patch &&
+sed -i '/#define LUA_ROOT/s:/usr/local/:/usr/:' src/luaconf.h &&
+make MYCFLAGS="-DLUA_COMPAT_5_2 -DLUA_COMPAT_5_1" linux &&
+make INSTALL_TOP=/usr                \
+     INSTALL_DATA="cp -d"            \
+     INSTALL_MAN=/usr/share/man/man1 \
+     TO_LIB="liblua.so liblua.so.5.3 liblua.so.5.3.4" \
+     install &&
+mkdir -pv                      /usr/share/doc/lua-5.3.5 &&
+cp -v doc/*.{html,css,gif,png} /usr/share/doc/lua-5.3.5 &&
+install -v -m644 -D lua.pc /usr/lib/pkgconfig/lua.pc    &&
+cd .. && rm -rf lua-5.3.5
+
+-----------------------------------------------------------------------------
+
+tar -xf lua-5.2.4.tar.gz && cd lua-5.2.4 &&
+patch -Np1 -i ../../../patches/lua-5.2.4-shared_library-1.patch &&
+sed -i '/#define LUA_ROOT/s:/usr/local/:/usr/:' src/luaconf.h &&
+sed -r -e '/^LUA_(SO|A|T)=/ s/lua/lua5.2/' \
+       -e '/^LUAC_T=/ s/luac/luac5.2/'     \
+       -i src/Makefile &&
+make MYCFLAGS="-fPIC" linux &&
+make TO_BIN='lua5.2 luac5.2'                     \
+     TO_LIB="liblua5.2.so liblua5.2.so.5.2 liblua5.2.so.5.2.4" \
+     INSTALL_DATA="cp -d"                        \
+     INSTALL_TOP=$PWD/install/usr                \
+     INSTALL_INC=$PWD/install/usr/include/lua5.2 \
+     INSTALL_MAN=$PWD/install/usr/share/man/man1 \
+     install &&
+install -Dm644 lua.pc install/usr/lib/pkgconfig/lua52.pc &&
+mkdir -pv install/usr/share/doc/lua-5.2.4 &&
+cp -v doc/*.{html,css,gif,png} install/usr/share/doc/lua-5.2.4 &&
+
+ln -s liblua5.2.so install/usr/lib/liblua.so.5.2   &&
+ln -s liblua5.2.so install/usr/lib/liblua.so.5.2.4 &&
+mv install/usr/share/man/man1/{lua.1,lua52.1}      &&
+mv install/usr/share/man/man1/{luac.1,luac52.1}    &&
+chown -R root:root install  &&
+cp -a install/* /           &&
+cd .. && rm -rf lua-5.2.4
+
+----------------------------------------------------------------------------
+
+tar -xf autoconf-2.13.tar.gz && cd autoconf-2.13 &&
+patch -Np1 -i ../../../patches/autoconf-2.13-consolidated_fixes-1.patch &&
+mv -v autoconf.texi autoconf213.texi                      &&
+rm -v autoconf.info                                       &&
+./configure --prefix=/usr --program-suffix=2.13           &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 autoconf213.info /usr/share/info &&
+install-info --info-dir=/usr/share/info autoconf213.info &&
+cd .. && rm -rf autoconf-2.13
+
+----------------------------------------------------------------------------
+
+tar -xf rustc-1.37.0-src.tar.gz && cd rustc-1.37.0-src &&
+mkdir /opt/rustc-1.35.0             &&
+ln -svfin rustc-1.35.0 /opt/rustc   &&
+export RUSTFLAGS="$RUSTFLAGS -C link-args=-lffi" &&
+python3 ./x.py build --exclude src/tools/miri &&
+export LIBSSH2_SYS_USE_PKG_CONFIG=1 &&
+DESTDIR=${PWD}/install python3 ./x.py install &&
+unset LIBSSH2_SYS_USE_PKG_CONFIG &&
+chown -R root:root install &&
+cp -a install/* / &&
+cd .. && rm -rf rustc-1.37.0-src
+
+**as normal user:
+source /etc/profile.d/rustc.sh
+
+----------------------------------------------------------------------------
+
+tar -xf cbindgen-0.9.1.tar.gz && cd cbindgen-0.9.1 &&
+cargo build --release &&
+install -Dm755 target/release/cbindgen /usr/bin/ &&
+cd .. && rm -rf cbindgen-0.9.1
+
+----------------------------------------------------------------------------
+
+tar -xf clisp-2.49.tar.bz2 && cd clisp-2.49 &&
+sed -i -e '/socket/d' -e '/"streams"/d' tests/tests.lisp &&
+patch -Np1 -i ../../../patches/clisp-2.49-readline7_fixes-1.patch &&
+mkdir build &&
+cd    build &&
+../configure --srcdir=../                       \
+             --prefix=/usr                      \
+             --docdir=/usr/share/doc/clisp-2.49 \
+             --with-libsigsegv-prefix=/usr &&
+ulimit -s 16384 &&
+make -j1 &&
+make install &&
+cd ../../ && rm -rf clisp-2.49
+
+----------------------------------------------------------------------------
+
+tar -xf expect5.45.4.tar.gz && cd expect5.45.4 &&
+./configure --prefix=/usr           \
+            --with-tcl=/usr/lib     \
+            --enable-shared         \
+            --mandir=/usr/share/man \
+            --with-tclinclude=/usr/include &&
+make -j2 &&
+make -j2 install &&
+ln -svf expect5.45.4/libexpect5.45.4.so /usr/lib &&
+cd .. && rm -rf expect5.45.4
+
+-----------------------------------------------------------------------------
+
+tar -xf dejagnu-1.6.2.tar.gz && cd dejagnu-1.6.2 &&
+./configure --prefix=/usr &&
+makeinfo --html --no-split -o doc/dejagnu.html doc/dejagnu.texi &&
+makeinfo --plaintext       -o doc/dejagnu.txt  doc/dejagnu.texi &&
+make install &&
+install -v -dm755   /usr/share/doc/dejagnu-1.6.2 &&
+install -v -m644    doc/dejagnu.{html,txt} \
+                    /usr/share/doc/dejagnu-1.6.2 &&
+cd .. && rm -rf dejagnu-1.6.2
+
+-----------------------------------------------------------------------------
+
+tar -xf gcc-9.2.0.tar.xz && cd gcc-9.2.0 &&
+
+case $(uname -m) in
+  x86_64)
+    sed -e '/m64=/s/lib64/lib/' \
+        -i.orig gcc/config/i386/t-linux64
+  ;;
+esac
+
+mkdir build                                            &&
+cd    build                                            &&
+../configure                                           \
+    --prefix=/usr                                      \
+    --disable-multilib                                 \
+    --with-system-zlib                                 \
+    --enable-languages=c,c++,d,fortran,go,objc,obj-c++ &&
+make -j2 
+
+ulimit -s 32768 &&
+make -k -j4 check 
+../contrib/test_summary
+
+make -j2 install &&
+mkdir -pv /usr/share/gdb/auto-load/usr/lib              &&
+mv -v /usr/lib/*gdb.py /usr/share/gdb/auto-load/usr/lib &&
+chown -v -R root:root \
+    /usr/lib/gcc/*linux-gnu/9.2.0/include{,-fixed}
+rm -rf /usr/lib/gcc/$(gcc -dumpmachine)/9.2.0/include-fixed/bits/
+cd ../../ && rm -rf gcc-9.2.0
+
+-----------------------------------------------------------------------------
+
+tar -xf gc-8.0.4.tar.gz && cd gc-8.0.4 &&
+./configure --prefix=/usr      \
+            --enable-cplusplus \
+            --disable-static   \
+            --docdir=/usr/share/doc/gc-8.0.4 &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 doc/gc.man /usr/share/man/man3/gc_malloc.3 &&
+cd .. && rm -rf gc-8.0.4
+
+-----------------------------------------------------------------------------
+
+tar -xf guile-2.2.6.tar.xz && cd guile-2.2.6 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --docdir=/usr/share/doc/guile-2.2.6 &&
+make -j2    &&
+make html   &&
+makeinfo --plaintext -o doc/r5rs/r5rs.txt doc/r5rs/r5rs.texi &&
+makeinfo --plaintext -o doc/ref/guile.txt doc/ref/guile.texi &&
+make -j2 install      &&
+make install-html     &&
+mv /usr/lib/libguile-*-gdb.scm /usr/share/gdb/auto-load/usr/lib &&
+mv /usr/share/doc/guile-2.2.6/{guile.html,ref} &&
+mv /usr/share/doc/guile-2.2.6/r5rs{.html,}     &&
+find examples -name "Makefile*" -delete         &&
+cp -vR examples   /usr/share/doc/guile-2.2.6   &&
+for DIRNAME in r5rs ref; do
+  install -v -m644  doc/${DIRNAME}/*.txt \
+                    /usr/share/doc/guile-2.2.6/${DIRNAME}
+done &&
+unset DIRNAME &&
+cd .. && rm -rf guile-2.2.6
+
+-----------------------------------------------------------------------------
+
+tar -xf librep_0.92.7.tar.xz && cd librep_0.92.7 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+sed -i '5043,5044 d' libtool &&
+make -j2 install &&
+cd .. && rm -rf librep_0.92.7
+
+-----------------------------------------------------------------------------
+
+tar -xf mercurial-5.1.2.tar.gz && cd mercurial-5.1.2 &&
+make build &&
+make PREFIX=/usr install-bin &&
+cd .. && rm -rf mercurial-5.1.2
+
+----------------------------------------------------------------------------
+
+tar -xf php-7.3.10.tar.xz && cd php-7.3.10 &&
+./configure --prefix=/usr                \
+            --sysconfdir=/etc            \
+            --localstatedir=/var         \
+            --datadir=/usr/share/php     \
+            --mandir=/usr/share/man      \
+            --enable-fpm                 \
+            --without-pear               \
+            --with-fpm-user=apache       \
+            --with-fpm-group=apache      \
+            --with-fpm-systemd           \
+            --with-config-file-path=/etc \
+            --with-zlib                  \
+            --enable-bcmath              \
+            --with-bz2                   \
+            --enable-calendar            \
+            --enable-dba=shared          \
+            --with-gdbm                  \
+            --with-gmp                   \
+            --enable-ftp                 \
+            --with-gettext               \
+            --enable-mbstring            \
+            --with-readline --with-curl --with-openssl &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 php.ini-production /etc/php.ini &&
+install -v -m755 -d /usr/share/doc/php-7.3.10 &&
+install -v -m644    CODING_STANDARDS EXTENSIONS INSTALL NEWS README* UPGRADING* php.gif \
+                    /usr/share/doc/php-7.3.10 &&
+ln -v -sfn          /usr/lib/php/doc/Archive_Tar/docs/Archive_Tar.txt \
+                    /usr/share/doc/php-7.3.10 &&
+ln -v -sfn          /usr/lib/php/doc/Structures_Graph/docs \
+                    /usr/share/doc/php-7.3.10 &&
+if [ -f /etc/php-fpm.conf.default ]; then
+  mv -v /etc/php-fpm.conf{.default,} &&
+  mv -v /etc/php-fpm.d/www.conf{.default,}
+fi &&
+install -v -m644 ../php_manual_en.html.gz \
+    /usr/share/doc/php-7.3.10 &&
+gunzip -v /usr/share/doc/php-7.3.10/php_manual_en.html.gz &&
+pushd /usr/lib/php &&
+wget http://pear.php.net/go-pear.phar
+php ./go-pear.phar &&
+popd &&
+cd .. && rm -rf php-7.3.10
+
+-----------------------------------------------------------------------------
+
+tar -xf ruby-2.6.5.tar.xz && cd ruby-2.6.5 &&
+./configure --prefix=/usr   \
+            --enable-shared \
+            --docdir=/usr/share/doc/ruby-2.6.5 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf ruby-2.6.5
+
+-----------------------------------------------------------------------------
+
+tar -xf scons-3.1.1.tar.gz && cd scons-3.1.1 &&
+sed -i 's/env python/&3/' script/scons*            &&
+python3 setup.py install --prefix=/usr  \
+                         --standard-lib \
+                         --optimize=1   \
+                         --install-data=/usr/share &&
+rm -v /usr/bin/scons*.bat &&
+cd .. && rm -rf scons-3.1.1
+
+------------------------------------------------------------------------------
+
+tar -xf subversion-1.12.2.tar.bz2 && cd subversion-1.12.2 &&
+sed -i 's/classic/nofastunpack/' build.conf &&
+./configure --prefix=/usr             \
+            --disable-static          \
+            --with-apache-libexecdir  \
+            --with-lz4=internal       \
+	    --enable-javahl           \
+            --with-utf8proc=internal &&
+make -j1 &&
+doxygen doc/doxygen.conf &&
+make javahl  &&
+make swig-pl &&
+make swig-py \
+     swig_pydir=/usr/lib/python2.7/site-packages/libsvn \
+     swig_pydir_extra=/usr/lib/python2.7/site-packages/svn &&
+make swig-rb &&
+make -j1 install &&
+install -v -m755 -d /usr/share/doc/subversion-1.12.2 &&
+cp      -v -R doc/* /usr/share/doc/subversion-1.12.2 &&
+make install-javahl  &&
+make install-swig-pl &&
+make install-swig-py \
+      swig_pydir=/usr/lib/python2.7/site-packages/libsvn \
+      swig_pydir_extra=/usr/lib/python2.7/site-packages/svn &&
+make install-swig-rb &&
+cd .. && rm -rf subversion-1.12.2
+
+------------------------------------------------------------------------------
+
+tar -xf valgrind-3.15.0.tar.bz2 && cd valgrind-3.15.0 &&
+sed -i 's|/doc/valgrind||' docs/Makefile.in &&
+./configure --prefix=/usr \
+            --datadir=/usr/share/doc/valgrind-3.15.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf valgrind-3.15.0
+
+------------------------------------------------------------------------------
+
+tar -xf yasm-1.3.0.tar.gz && cd yasm-1.3.0 &&
+sed -i 's#) ytasm.*#)#' Makefile.in &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf yasm-1.3.0
+
+------------------------------------------------------------------------------
+
+tar -xf openjdk-12.0.2_linux-x64_bin.tar.gz && cd jdk-12.0.2 &&
+install -vdm755 /opt/OpenJDK-12.0.2+10-bin &&
+mv -v * /opt/OpenJDK-12.0.2+10-bin         &&
+chown -R root:root /opt/OpenJDK-12.0.2+10-bin &&
+ln -sfn OpenJDK-12.0.2+10-bin /opt/jdk &&
+cd .. && rm -rf jdk-12.0.2
+
+------------------------------------------------------------------------------
+
+tar -xf jdk-12.0.2+10.tar.bz2 && cd jdk12u-jdk-12.0.2+10 &&
+unset JAVA_HOME                             &&
+bash configure --enable-unlimited-crypto    \
+               --disable-warnings-as-errors \
+               --with-stdc++lib=dynamic     \
+               --with-giflib=system         \
+               --with-lcms=system           \
+               --with-libjpeg=system        \
+               --with-libpng=system         \
+               --with-zlib=system           \
+               --with-version-build="10"    \
+               --with-version-pre=""        \
+               --with-version-opt=""        \
+               --with-cacerts-file=/etc/pki/tls/java/cacerts &&
+make images
+install -vdm755 /opt/jdk-12.0.2+10             &&
+cp -Rv build/*/images/jdk/* /opt/jdk-12.0.2+10 &&
+chown -R root:root /opt/jdk-12.0.2+10          &&
+for s in 16 24 32 48; do
+  install -vDm644 src/java.desktop/unix/classes/sun/awt/X11/java-icon${s}.png \
+                  /usr/share/icons/hicolor/${s}x${s}/apps/java.png
+done
+ln -v -nsf jdk-12.0.2+10 /opt/jdk &&
+cd .. && rm -rf jdk12u-jdk-12.0.2+10
+
+-------------------------------------------------------------------------------
+
+tar -xf apache-ant-1.10.7-src.tar.xz && cd apache-ant-1.10.7 &&
+sed -i 's/--add-modules java.activation/-html4/' build.xml &&
+./bootstrap.sh &&
+bootstrap/bin/ant -f fetch.xml -Ddest=optional &&
+./build.sh -Ddist.dir=$PWD/ant-1.10.7 dist &&
+cp -rv ant-1.10.7 /opt/            &&
+chown -R root:root /opt/ant-1.10.7 &&
+ln -sfv ant-1.10.7 /opt/ant &&
+cd .. && rm -rf apache-ant-1.10.7
+
+-------------------------------------------------------------------------------
+
+tar -xf tk8.6.9-src.tar.gz && cd tk8.6.9 &&
+cd unix &&
+./configure --prefix=/usr \
+            --mandir=/usr/share/man \
+            $([ $(uname -m) = x86_64 ] && echo --enable-64bit) &&
+make -j2 &&
+sed -e "s@^\(TK_SRC_DIR='\).*@\1/usr/include'@" \
+    -e "/TK_B/s@='\(-L\)\?.*unix@='\1/usr/lib@" \
+    -i tkConfig.sh &&
+make -j2 install &&
+make install-private-headers &&
+ln -v -sf wish8.6 /usr/bin/wish &&
+chmod -v 755 /usr/lib/libtk8.6.so &&
+cd ../../ && rm -rf tk8.6.9
+
+-----------------------------------------------------------------------------
+
+tar -xf Python-3.8.0.tar.xz && cd Python-3.8.0 &&
+CXX="/usr/bin/g++"                \
+./configure --prefix=/usr         \
+            --enable-shared       \
+            --with-system-expat   \
+	    --enable-optimizations \
+            --with-system-ffi     \
+            --with-ensurepip=yes  &&
+make -j2 &&
+make -j2 install &&
+chmod -v 755 /usr/lib/libpython3.8.so &&
+chmod -v 755 /usr/lib/libpython3.so   &&
+ln -svfn python-3.8.0 /usr/share/doc/python-3 &&
+export PYTHONDOCS=/usr/share/doc/python-3/html &&
+cd .. && rm -rf Python-3.8.0 
+
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,806 @@
+******** VM/QEMU ***********************************************************
+----------------------------------------------------------------------------
+
+tar -xf qemu-4.1.0.tar.xz && cd qemu-4.1.0
+if [ $(uname -m) = i686 ]; then
+   QEMU_ARCH=i386-softmmu
+else
+   QEMU_ARCH=x86_64-softmmu
+fi
+mkdir -vp build &&
+cd        build &&
+
+../configure --prefix=/usr               \
+             --sysconfdir=/etc           \
+             --target-list=$QEMU_ARCH    \
+             --python=python3            \
+             --audio-drv-list=alsa       \
+             --docdir=/usr/share/doc/qemu-4.1.0 --firmwarepath=/lib/firmware --disable-multilib &&
+
+unset QEMU_ARCH &&
+
+make -j1
+make install
+cd ../../ && rm -rf qemu-4.1.0
+
+
+Install prefix    /usr
+BIOS directory    /usr/share/qemu
+firmware path     /usr/share/qemu-firmware
+binary directory  /usr/bin
+library directory /usr/lib
+module directory  /usr/lib/qemu
+libexec directory /usr/libexec
+include directory /usr/include
+config directory  /etc
+local state directory   /usr/var
+Manual directory  /usr/share/man
+ELF interp prefix /usr/gnemul/qemu-%M
+Source path       /usr/src/blfs/vm/qemu-4.1.0
+GIT binary        git
+GIT submodules    
+C compiler        cc
+Host C compiler   cc
+C++ compiler      c++
+Objective-C compiler clang
+ARFLAGS           rv
+CFLAGS            -O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -g 
+QEMU_CFLAGS       -I/usr/include/pixman-1 -I$(SRC_PATH)/dtc/libfdt  -pthread -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fPIE -DPIE -m64 -mcx16 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -Wstrict-prototypes -Wredundant-decls -Wall -Wundef -Wwrite-strings -Wmissing-prototypes -fno-strict-aliasing -fno-common -fwrapv -std=gnu99  -Wexpansion-to-defined -Wendif-labels -Wno-shift-negative-value -Wno-missing-include-dirs -Wempty-body -Wnested-externs -Wformat-security -Wformat-y2k -Winit-self -Wignored-qualifiers -Wold-style-declaration -Wold-style-definition -Wtype-limits -fstack-protector-strong -I/usr/include/p11-kit-1    -I/usr/include/libpng16 -I/usr/include/libdrm -I$(SRC_PATH)/capstone/include
+LDFLAGS           -Wl,--warn-common -Wl,-z,relro -Wl,-z,now -pie -m64 -g 
+QEMU_LDFLAGS      -L$(BUILD_DIR)/dtc/libfdt 
+make              make
+install           install
+python            python3 -B (3.8.0)
+slirp support     internal 
+smbd              /usr/sbin/smbd
+module support    no
+host CPU          x86_64
+host big endian   no
+target list       x86_64-softmmu
+gprof enabled     no
+sparse enabled    no
+strip binaries    yes
+profiler          no
+static build      no
+SDL support       yes (2.0.10)
+SDL image support no
+GTK support       yes (3.24.12)
+GTK GL support    yes
+VTE support       no 
+TLS priority      NORMAL
+GNUTLS support    yes
+libgcrypt         no
+nettle            yes (3.5.1)
+libtasn1          yes
+PAM               yes
+iconv support     yes
+curses support    yes
+virgl support     no 
+curl support      yes
+mingw32 support   no
+Audio drivers     alsa
+Block whitelist (rw) 
+Block whitelist (ro) 
+VirtFS support    yes
+Multipath support no
+VNC support       yes
+VNC SASL support  yes
+VNC JPEG support  yes
+VNC PNG support   yes
+xen support       no
+brlapi support    no
+bluez  support    yes
+Documentation     no
+PIE               yes
+vde support       no
+netmap support    no
+Linux AIO support yes
+ATTR/XATTR support yes
+Install blobs     yes
+KVM support       yes
+HAX support       no
+HVF support       no
+WHPX support      no
+TCG support       yes
+TCG debug enabled no
+TCG interpreter   no
+malloc trim support yes
+RDMA support      no
+PVRDMA support    no
+fdt support       git
+membarrier        no
+preadv support    yes
+fdatasync         yes
+madvise           yes
+posix_madvise     yes
+posix_memalign    yes
+libcap-ng support no
+vhost-net support yes
+vhost-crypto support yes
+vhost-scsi support yes
+vhost-vsock support yes
+vhost-user support yes
+Trace backends    log
+spice support     no 
+rbd support       no
+xfsctl support    yes
+smartcard support no
+libusb            yes
+usb net redir     no
+OpenGL support    yes
+OpenGL dmabufs    yes
+libiscsi support  no
+libnfs support    no
+build guest agent yes
+QGA VSS support   no
+QGA w32 disk info no
+QGA MSI support   no
+seccomp support   yes
+coroutine backend ucontext
+coroutine pool    yes
+debug stack usage no
+mutex debugging   no
+crypto afalg      no
+GlusterFS support no
+gcov              gcov
+gcov enabled      no
+TPM support       yes
+libssh support    no
+QOM debugging     yes
+Live block migration yes
+lzo support       yes
+snappy support    no
+bzip2 support     yes
+lzfse support     no
+NUMA host support no
+libxml2           yes
+tcmalloc support  no
+jemalloc support  no
+avx2 optimization yes
+replication support yes
+VxHS block device no
+bochs support     yes
+cloop support     yes
+dmg support       yes
+qcow v1 support   yes
+vdi support       yes
+vvfat support     yes
+qed support       yes
+parallels support yes
+sheepdog support  yes
+capstone          internal
+docker            no
+libpmem support   no
+libudev           yes
+default devices   yes
+
+NOTE: cross-compilers enabled:  'cc'
+
+
+
+******** SHELLS ************************************************************
+----------------------------------------------------------------------------
+
+tar -xf dash-0.5.10.2.tar.gz && cd dash-0.5.10.2 &&
+./configure --bindir=/bin --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+ln -svf dash /bin/sh &&
+cd .. && rm -rf dash-0.5.10.2
+
+----------------------------------------------------------------------------
+
+tar -xf tcsh-6.21.00.tar.gz && cd tcsh-6.21.00 &&
+sed -i 's|SVID_SOURCE|DEFAULT_SOURCE|g' config/linux  &&
+sed -i 's|BSD_SOURCE|DEFAULT_SOURCE|g'  config/linux  &&
+./configure --prefix=/usr --bindir=/bin &&
+make -j2 &&
+sh ./tcsh.man2html &&
+make install install.man &&
+ln -v -sf tcsh   /bin/csh &&
+ln -v -sf tcsh.1 /usr/share/man/man1/csh.1 &&
+install -v -m755 -d          /usr/share/doc/tcsh-6.21.00/html &&
+install -v -m644 tcsh.html/* /usr/share/doc/tcsh-6.21.00/html &&
+install -v -m644 FAQ         /usr/share/doc/tcsh-6.21.00      &&
+cd .. && rm -rf tcsh-6.21.00
+
+----------------------------------------------------------------------------
+
+tar -xf zsh-5.7.1.tar.xz && cd zsh-5.7.1 &&
+tar --strip-components=1 -xvf ../zsh-5.7.1-doc.tar.xz &&
+./configure --prefix=/usr         \
+            --bindir=/bin         \
+            --sysconfdir=/etc/zsh \
+            --enable-etcdir=/etc/zsh                  &&
+make -j2                                              &&
+makeinfo  Doc/zsh.texi --plaintext -o Doc/zsh.txt     &&
+makeinfo  Doc/zsh.texi --html      -o Doc/html        &&
+makeinfo  Doc/zsh.texi --html --no-split --no-headers -o Doc/zsh.html &&
+make -j2 install                                      &&
+make infodir=/usr/share/info install.info             &&
+install -v -m755 -d                 /usr/share/doc/zsh-5.7.1/html &&
+install -v -m644 Doc/html/*         /usr/share/doc/zsh-5.7.1/html &&
+install -v -m644 Doc/zsh.{html,txt} /usr/share/doc/zsh-5.7.1      &&
+make htmldir=/usr/share/doc/zsh-5.7.1/html install.html &&
+install -v -m644 Doc/zsh.dvi /usr/share/doc/zsh-5.7.1   &&
+cd .. && rm -rf zsh-5.7.1
+
+----------------------------------------------------------------------------
+******** MAIL SERVER *******************************************************
+----------------------------------------------------------------------------
+
+tar -xf dovecot-2.3.7.2.tar.gz && cd dovecot-2.3.7.2 &&
+CFLAGS+=" -I/usr/include/tirpc" \
+LDFLAGS+=" -ltirpc" \
+./configure --prefix=/usr                          \
+            --sysconfdir=/etc                      \
+            --localstatedir=/var                   \
+            --docdir=/usr/share/doc/dovecot-2.3.7.2 \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf dovecot-2.3.7.2
+
+----------------------------------------------------------------------------
+
+tar -xf sendmail.8.15.2.tar.gz && cd sendmail-8.15.2 &&
+patch -Np1 -i ../../../patches/sendmail.8.15.2-openssl-1.patch &&
+sed -i 's|/usr/man/man|/usr/share/man/man|' \
+    devtools/OS/Linux           &&
+cd sendmail                     &&
+sh Build                        &&
+cd ../cf/cf                     &&
+cp generic-linux.mc sendmail.mc &&
+sh Build sendmail.cf
+install -v -d -m755 /etc/mail &&
+sh Build install-cf &&
+cd ../..            &&
+sh Build install    &&
+install -v -m644 cf/cf/{submit,sendmail}.mc /etc/mail &&
+cp -v -R cf/* /etc/mail                               &&
+install -v -m755 -d /usr/share/doc/sendmail-8.15.2/{cf,sendmail} &&
+install -v -m644 CACerts FAQ KNOWNBUGS LICENSE PGPKEYS README RELEASE_NOTES \
+        /usr/share/doc/sendmail-8.15.2 &&
+install -v -m644 sendmail/{README,SECURITY,TRACEFLAGS,TUNING} \
+        /usr/share/doc/sendmail-8.15.2/sendmail &&
+install -v -m644 cf/README /usr/share/doc/sendmail-8.15.2/cf &&
+for manpage in sendmail editmap mailstats makemap praliases smrsh
+do
+    install -v -m644 $manpage/$manpage.8 /usr/share/man/man8
+done &&
+install -v -m644 sendmail/aliases.5    /usr/share/man/man5 &&
+install -v -m644 sendmail/mailq.1      /usr/share/man/man1 &&
+install -v -m644 sendmail/newaliases.1 /usr/share/man/man1 &&
+install -v -m644 vacation/vacation.1   /usr/share/man/man1 &&
+cd doc/op                                       &&
+sed -i 's/groff/GROFF_NO_SGR=1 groff/' Makefile &&
+make op.txt &&
+install -v -d -m755 /usr/share/doc/sendmail-8.15.2 &&
+install -v -m644 op.ps op.txt /usr/share/doc/sendmail-8.15.2 &&
+cd ../.. &&
+cd .. && rm -rf sendmail-8.15.2
+
+----------------------------------------------------------------------------
+
+tar -xf procmail-3.22.tar.gz && cd procmail-3.22 && 
+sed -i 's/getline/get_line/' src/*.[ch]                   &&
+patch -Np1 -i ../../../patches/procmail-3.22-consolidated_fixes-1.patch &&
+make LOCKINGTEST=/tmp MANDIR=/usr/share/man install       &&
+make install-suid &&
+cd .. && rm -rf procmail-3.22
+
+----------------------------------------------------------------------------
+******** PRINTING **********************************************************
+----------------------------------------------------------------------------
+
+tar -xf cups-2.3.0-source.tar.gz && cd cups-2.3.0 &&
+sed -i 's:555:755:g;s:444:644:g' Makedefs.in                        &&
+sed -i '/stat.h/a #include <asm-generic/ioctls.h>' tools/ipptool.c   &&
+CC=gcc CXX=g++ \
+./configure --libdir=/usr/lib            \
+            --with-rcdir=/tmp/cupsinit   \
+            --with-system-groups=lpadmin \
+            --with-docdir=/usr/share/cups/doc-2.3.0 &&
+make -j2 &&
+make -j2 install &&
+rm -rf /tmp/cupsinit &&
+ln -svnf ../cups/doc-2.3.0 /usr/share/doc/cups-2.3.0 &&
+echo "ServerName /var/run/cups/cups.sock" > /etc/cups/client.conf &&
+cd .. && rm -rf cups-2.3.0
+
+----------------------------------------------------------------------------
+
+tar -xf ghostscript-9.50.tar.xz && cd ghostscript-9.50 &&
+rm -rf freetype lcms2mt jpeg libpng openjpeg &&
+rm -rf zlib &&
+./configure --prefix=/usr           \
+            --disable-compile-inits \
+            --enable-dynamic        \
+            --with-system-libtiff   &&
+make -j2 &&
+make so &&
+make -j2 install &&
+make soinstall &&
+install -v -m644 base/*.h /usr/include/ghostscript &&
+ln -sfvn ghostscript /usr/include/ps &&
+mv -v /usr/share/doc/ghostscript/9.50 /usr/share/doc/ghostscript-9.50  &&
+rm -rfv /usr/share/doc/ghostscript &&
+cp -a examples/ /usr/share/ghostscript/9.50/ &&
+tar -xvf ../ghostscript-fonts-std-8.11.tar.gz -C /usr/share/ghostscript --no-same-owner &&
+tar -xvf ../gnu-gs-fonts-other-6.0.tar.gz     -C /usr/share/ghostscript --no-same-owner &&
+fc-cache -v /usr/share/ghostscript/fonts/ &&
+cd .. && rm -rf ghostscript-9.50
+
+----------------------------------------------------------------------------
+
+tar -xf cups-filters-1.25.6.tar.xz && cd cups-filters-1.25.6 &&
+sed -i "s:cups.service:org.cups.cupsd.service:g" utils/cups-browsed.service &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --without-rcdir      \
+            --disable-static     \
+            --disable-avahi      \
+            --docdir=/usr/share/doc/cups-filters-1.25.6 &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 utils/cups-browsed.service /lib/systemd/system/cups-browsed.service &&
+cd .. && rm -rf cups-filters-1.25.6
+
+----------------------------------------------------------------------------
+******** POSTSCRIPT ********************************************************
+----------------------------------------------------------------------------
+
+tar -xf mupdf-1.16.1-source.tar.gz && cd mupdf-1.16.1-source &&
+patch -Np1 -i ../../../patches/mupdf-1.16.1-shared_libs-1.patch &&
+USE_SYSTEM_LIBS=yes make &&
+USE_SYSTEM_LIBS=yes                     \
+make prefix=/usr                        \
+     build=release                      \
+     docdir=/usr/share/doc/mupdf-1.16.1 \
+     install                            &&
+ln -sfv mupdf-x11 /usr/bin/mupdf        &&
+ldconfig                                &&
+cd .. && rm -rf mupdf-1.16.1-source
+
+----------------------------------------------------------------------------
+******** SYSUTILS ***********************************************************
+-----------------------------------------------------------------------------
+
+tar -xf which-2.21.tar.gz && cd which-2.21 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf which-2.21
+
+-----------------------------------------------------------------------------
+
+tar -xf unzip60.tgz && cd unzip60 &&
+make -f unix/Makefile generic &&
+make prefix=/usr MANDIR=/usr/share/man/man1 \
+ -f unix/Makefile install &&
+cd .. && rm -rf unzip60
+
+-----------------------------------------------------------------------------
+
+tar -xf unrarsrc-5.8.2.tar.gz && cd unrar &&
+make -f makefile &&
+install -v -m755 unrar /usr/bin &&
+cd .. && rm -rf unrar
+
+------------------------------------------------------------------------------
+
+tar -xf gpm-1.20.7.tar.bz2 && cd gpm-1.20.7 &&
+sed -i -e 's:<gpm.h>:"headers/gpm.h":' src/prog/{display-buttons,display-coords,get-versions}.c &&
+patch -Np1 -i ../../../patches/gpm-1.20.7-glibc_2.26-1.patch &&
+./autogen.sh                                &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+install-info --dir-file=/usr/share/info/dir           \
+             /usr/share/info/gpm.info                 &&
+ln -sfv libgpm.so.2.1.0 /usr/lib/libgpm.so            &&
+install -v -m644 conf/gpm-root.conf /etc              &&
+install -v -m755 -d /usr/share/doc/gpm-1.20.7/support &&
+install -v -m644    doc/support/*                     \
+                    /usr/share/doc/gpm-1.20.7/support &&
+install -v -m644    doc/{FAQ,HACK_GPM,README*}        \
+                    /usr/share/doc/gpm-1.20.7         &&
+cd .. && rm -rf gpm-1.20.7
+
+--------------------------------------------------------------------------------
+
+tar -xf cpio-2.12.tar.bz2 && cd cpio-2.12 &&
+./configure --prefix=/usr \
+            --bindir=/bin \
+            --enable-mt   \
+            --with-rmt=/usr/libexec/rmt &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cpio-2.12
+
+--------------------------------------------------------------------------------
+
+tar -xf zip30.tgz && cd zip30 &&
+make -f unix/Makefile generic_gcc &&
+make prefix=/usr MANDIR=/usr/share/man/man1 -f unix/Makefile install &&
+cd .. && rm -rf zip30
+
+-------------------------------------------------------------------------------
+
+tar -xf accountsservice-0.6.55.tar.xz && cd accountsservice-0.6.55 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr                   \
+            -Dadmin_group=adm         \
+            -Dsystemd=true            \
+            .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf accountsservice-0.6.55
+
+-------------------------------------------------------------------------------
+
+tar -xf acpid-2.0.32.tar.xz && cd acpid-2.0.32 &&
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/acpid-2.0.32 &&
+make -j2 &&
+make -j2 install &&
+install -v -m755 -d /etc/acpi/events &&
+cp -r samples /usr/share/doc/acpid-2.0.32 &&
+cd .. && rm -rf acpid-2.0.32
+
+-------------------------------------------------------------------------------
+
+tar -xf at_3.1.23.orig.tar.gz && cd at-3.1.23 &&
+sed -i '/docdir/s/=.*/= @docdir@/' Makefile.in &&
+autoreconf &&
+./configure --with-daemon_username=atd        \
+            --with-daemon_groupname=atd       \
+            SENDMAIL=/usr/sbin/sendmail       \
+            --with-systemdsystemunitdir=/lib/systemd/system &&
+make -j1 &&
+make install docdir=/usr/share/doc/at-3.1.23 \
+             atdocdir=/usr/share/doc/at-3.1.23 &&
+cd .. && rm -rf at-3.1.23
+
+-------------------------------------------------------------------------------
+
+tar -xf autofs-5.1.5.tar.xz && cd autofs-5.1.5 &&
+./configure --prefix=/         \
+            --with-libtirpc    \
+            --without-openldap \
+	    --with-systemd     \
+            --mandir=/usr/share/man &&
+make -j2 &&
+make -j2 install &&
+make install_samples &&
+cd .. && rm -rf autofs-5.1.5
+
+-------------------------------------------------------------------------------
+
+tar -xf bluez-5.51.tar.xz && cd bluez-5.51 &&
+./configure --prefix=/usr         \
+            --sysconfdir=/etc     \
+            --localstatedir=/var  \
+            --enable-library      &&
+make -j2 &&
+make -j2 install &&
+ln -svf ../libexec/bluetooth/bluetoothd /usr/sbin &&
+install -v -dm755 /etc/bluetooth &&
+install -v -m644 src/main.conf /etc/bluetooth/main.conf &&
+install -v -dm755 /usr/share/doc/bluez-5.51 &&
+install -v -m644 doc/*.txt /usr/share/doc/bluez-5.51 &&
+cd .. && rm -rf bluez-5.51
+
+-------------------------------------------------------------------------------
+
+tar -xf bubblewrap-0.3.3.tar.xz && cd bubblewrap-0.3.3 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf bubblewrap-0.3.3
+
+-------------------------------------------------------------------------------
+
+tar -xf colord-1.4.4.tar.xz && cd colord-1.4.4 &&
+mv po/fur.po po/ur.po &&
+sed -i 's/fur/ur/' po/LINGUAS &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr            \
+      --sysconfdir=/etc        \
+      --localstatedir=/var     \
+      -Ddaemon_user=colord     \
+      -Dvapi=true              \
+      -Dsystemd=true           \
+      -Dlibcolordcompat=true   \
+      -Dargyllcms_sensor=false \
+      -Dbash_completion=false  \
+      -Ddocs=false             \
+      -Dman=false ..           &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf colord-1.4.4
+
+-------------------------------------------------------------------------------
+
+tar -xf cups-pk-helper-0.2.6.tar.xz && cd cups-pk-helper-0.2.6 &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cups-pk-helper-0.2.6
+
+-------------------------------------------------------------------------------
+
+tar -xf fcron-3.2.1.src.tar.gz && cd fcron-3.2.1 &&
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --localstatedir=/var   \
+            --without-sendmail     \
+            --with-piddir=/run     \
+            --with-boot-install=no &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf fcron-3.2.1
+
+**AFTER BOOT
+systemctl start fcron &&
+fcrontab -z -u systab
+
+-------------------------------------------------------------------------------
+
+tar -xf hdparm-9.58.tar.gz && cd hdparm-9.58 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf hdparm-9.58
+
+-------------------------------------------------------------------------------
+
+tar -xf LSB-Tools-0.5.tar.gz && cd LSB-Tools-0.5 &&
+python3 setup.py build &&
+python3 setup.py install --optimize=1       &&
+ln -sv /usr/lib/lsb/install_initd /usr/sbin &&
+ln -sv /usr/lib/lsb/remove_initd  /usr/sbin &&
+cd .. && rm -rf LSB-Tools-0.5
+
+-------------------------------------------------------------------------------
+
+tar -xf lm_sensors-3.4.0.tar.bz2 && cd lm_sensors-3.4.0 &&
+make PREFIX=/usr        \
+     BUILD_STATIC_LIB=0 \
+     MANDIR=/usr/share/man &&
+make PREFIX=/usr        \
+     BUILD_STATIC_LIB=0 \
+     MANDIR=/usr/share/man install &&
+install -v -m755 -d /usr/share/doc/lm_sensors-3.4.0 &&
+cp -rv              README INSTALL doc/* \
+                    /usr/share/doc/lm_sensors-3.4.0 &&
+cd .. && rm -rf lm_sensors-3.4.0
+
+**sensors-detect
+
+-------------------------------------------------------------------------------
+
+tar -xf logrotate-3.15.0.tar.xz && cd logrotate-3.15.0 &&
+./configure --prefix=/usr        &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf logrotate-3.15.0
+
+-------------------------------------------------------------------------------
+
+tar -xf mc-4.8.23.tar.xz && cd mc-4.8.23 &&
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --enable-charset &&
+make -j2 &&
+make -j2 install &&
+cp -v doc/keybind-migration.txt /usr/share/mc &&
+cd .. && rm -rf mc-4.8.23
+
+-------------------------------------------------------------------------------
+
+tar -xf ModemManager-1.10.6.tar.xz && cd ModemManager-1.10.6 &&
+./configure --prefix=/usr                 \
+            --sysconfdir=/etc             \
+            --localstatedir=/var          \
+            --enable-more-warnings=no     \
+            --with-systemd-journal        \
+            --with-systemd-suspend-resume \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf ModemManager-1.10.6
+
+-------------------------------------------------------------------------------
+
+tar -xf p7zip_16.02_src_all.tar.bz2 && cd p7zip_16.02 &&
+make all3 &&
+make DEST_HOME=/usr \
+     DEST_MAN=/usr/share/man \
+     DEST_SHARE_DOC=/usr/share/doc/p7zip-16.02 install &&
+cd .. && rm -rf p7zip_16.02
+
+-------------------------------------------------------------------------------
+
+gzip -dck paxmirabilis-20161104.cpio.gz | cpio -mid &&
+cd pax &&
+sed -i '/stat.h/a #include <sys/sysmacros.h>' cpio.c gen_subs.c tar.c &&
+cc -O2 -DLONG_OFF_T -o pax -DPAX_SAFE_PATH=\"/bin\" *.c &&
+install -v pax /bin &&
+install -v pax.1 /usr/share/man/man1 &&
+cd .. && rm -rf pax
+
+-------------------------------------------------------------------------------
+
+tar -xf pciutils-3.6.2.tar.xz && cd pciutils-3.6.2 &&
+make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes &&
+make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes                 \
+     install install-lib        &&
+chmod -v 755 /usr/lib/libpci.so &&
+cd .. && rm -rf pciutils-3.6.2
+
+-------------------------------------------------------------------------------
+
+tar -xf pm-utils-1.4.1.tar.gz && cd pm-utils-1.4.1 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --docdir=/usr/share/doc/pm-utils-1.4.1 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf pm-utils-1.4.1
+
+-------------------------------------------------------------------------------
+
+tar -xf raptor2-2.0.15.tar.gz && cd raptor2-2.0.15 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf raptor2-2.0.15
+
+-------------------------------------------------------------------------------
+
+tar -xf rasqal-0.9.33.tar.gz && cd rasqal-0.9.33 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf rasqal-0.9.33
+
+-------------------------------------------------------------------------------
+
+tar -xf redland-1.0.17.tar.gz && cd redland-1.0.17 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf redland-1.0.17
+
+-------------------------------------------------------------------------------
+
+tar -xf sg3_utils-1.44.tar.xz && cd sg3_utils-1.44 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf sg3_utils-1.44
+
+-------------------------------------------------------------------------------
+
+tar -xf sysstat-12.1.6.tar.xz && cd sysstat-12.1.6 &&
+sa_lib_dir=/usr/lib/sa    \
+sa_dir=/var/log/sa        \
+conf_dir=/etc/sysconfig   \
+./configure --prefix=/usr \
+            --disable-file-attr &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 sysstat.service /lib/systemd/system/sysstat.service &&
+sed -i "/^Also=/d" /lib/systemd/system/sysstat.service &&
+cd .. && rm -rf sysstat-12.1.6
+
+-------------------------------------------------------------------------------
+
+tar -xf udisks-2.8.4.tar.bz2 && cd udisks-2.8.4 &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --disable-static     &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf udisks-2.8.4
+
+-------------------------------------------------------------------------------
+
+tar -xf upower-0.99.11.tar.xz && cd upower-0.99.11 &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --enable-deprecated  \
+            --disable-static     &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf upower-0.99.11
+
+-------------------------------------------------------------------------------
+
+tar -xf usbutils-012.tar.xz && cd usbutils-012 &&
+./autogen.sh --prefix=/usr --datadir=/usr/share/hwdata &&
+make -j2 &&
+make -j2 install &&
+install -dm755 /usr/share/hwdata/ &&
+wget http://www.linux-usb.org/usb.ids -O /usr/share/hwdata/usb.ids &&
+cd .. && rm -rf usbutils-012
+
+------------------------------------------------------------------------------
+
+tar -xf dbus-1.12.16.tar.gz && cd dbus-1.12.16 &&
+./configure --prefix=/usr                        \
+            --sysconfdir=/etc                    \
+            --localstatedir=/var                 \
+            --enable-user-session                \
+            --disable-doxygen-docs               \
+            --disable-xml-docs                   \
+            --disable-static                     \
+            --docdir=/usr/share/doc/dbus-1.12.16 \
+            --with-console-auth-dir=/run/console \
+            --with-system-pid-file=/run/dbus/pid \
+            --with-system-socket=/run/dbus/system_bus_socket &&
+make -j2 &&
+make -j2 install &&
+mv -v /usr/lib/libdbus-1.so.* /lib &&
+ln -sfv ../../lib/$(readlink /usr/lib/libdbus-1.so) /usr/lib/libdbus-1.so &&
+ln -sfv /etc/machine-id /var/lib/dbus &&
+cd .. && rm -rf dbus-1.12.16
+
+------------------------------------------------------------------------------
+
+tar -xf elogind-241.3.tar.gz && cd elogind-241.3 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr                        \
+      --sysconfdir=/etc                    \
+      --localstatedir=/var                 \
+      -Dcgroup-controller=elogind          \
+      -Ddbuspolicydir=/etc/dbus-1/system.d \
+      ..  &&
+ninja &&
+ninja install &&
+ln -sfv  libelogind.pc /usr/lib/pkgconfig/libsystemd.pc &&
+ln -sfvn elogind /usr/include/systemd &&
+cd ../../ && rm -rf elogind-241.3 
+
+------------------------------------------------------------------------------
+
+tar -xf systemd-243.tar.gz && cd systemd-243 &&
+patch -Np1 -i ../../patches/systemd-243-consolidated_fixes-1.patch &&
+sed -i 's/GROUP="render", //' rules/50-udev-default.rules.in &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr         \
+      --sysconfdir=/etc     \
+      --localstatedir=/var  \
+      -Dblkid=true          \
+      -Dbuildtype=release   \
+      -Ddefault-dnssec=no   \
+      -Dfirstboot=false     \
+      -Dinstall-tests=false \
+      -Dldconfig=false      \
+      -Drootprefix=         \
+      -Drootlibdir=/lib     \
+      -Dsplit-usr=true      \
+      -Dsysusers=false      \
+      -Drpmmacrosdir=no     \
+      -Db_lto=false         \
+      -Dgnutls=false        \
+      ..                    &&
+ninja &&
+ninja install &&
+rm -fv /etc/sysctl.d/50-pid-max.conf &&
+cd ../../ && rm -rf systemd-243
+
+------------------------------------------------------------------------------
+
+

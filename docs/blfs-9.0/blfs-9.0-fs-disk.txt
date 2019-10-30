@@ -1,0 +1,230 @@
+********** FS & DISK MANAGEMENT *************************
+---------------------------------------------------------
+
+tar -xf LVM2.2.03.05.tgz && cd LVM2.2.03.05 &&
+SAVEPATH=$PATH                  &&
+PATH=$PATH:/sbin:/usr/sbin      &&
+./configure --prefix=/usr       \
+            --exec-prefix=      \
+            --enable-cmdlib     \
+            --enable-pkgconfig  \
+            --enable-udev_sync  &&
+make                            &&
+PATH=$SAVEPATH                  &&
+unset SAVEPATH &&
+make -j2 install &&
+cd .. && rm -rf LVM2.2.03.05
+
+----------------------------------------------------------
+
+tar -xf parted-3.3.tar.xz && cd parted-3.3 &&
+sed -i '/utsname.h/a#include <sys/sysmacros.h>' libparted/arch/linux.c &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -C doc html  &&
+make -j2 install &&
+install -v -m755 -d /usr/share/doc/parted-3.3/html &&
+install -v -m644    doc/html/* \
+                    /usr/share/doc/parted-3.3/html &&
+install -v -m644    doc/{FAT,API,parted.{txt,html}} \
+                    /usr/share/doc/parted-3.3 &&
+cd .. && rm -rf parted-3.3
+
+------------------------------------------------------------
+
+tar -xf btrfs-progs-v5.2.2.tar.xz && cd btrfs-progs-v5.2.2 &&
+./configure --prefix=/usr  \
+            --bindir=/bin  \
+            --libdir=/lib  \
+            --disable-zstd &&
+make -j2 &&
+make -j2 install &&
+ln -sfv ../../lib/$(readlink /lib/libbtrfs.so) /usr/lib/libbtrfs.so &&
+ln -sfv ../../lib/$(readlink /lib/libbtrfsutil.so) /usr/lib/libbtrfsutil.so &&
+rm -fv /lib/libbtrfs.{a,so} /lib/libbtrfsutil.{a,so} &&
+mv -v /bin/{mkfs,fsck}.btrfs /sbin &&
+cd .. && rm -rf btrfs-progs-v5.2.2
+
+---------------------------------------------------------------
+
+tar -xf fuse-3.7.0.tar.xz && cd fuse-3.7.0 &&
+sed -i '/^udev/,$ s/^/#/' util/meson.build &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+mv -vf   /usr/lib/libfuse3.so.3*     /lib                 &&
+ln -sfvn ../../lib/libfuse3.so.3.7.0 /usr/lib/libfuse3.so &&
+mv -vf /usr/bin/fusermount3  /bin         &&
+mv -vf /usr/sbin/mount.fuse3 /sbin        &&
+chmod u+s /bin/fusermount3                &&
+install -v -m755 -d /usr/share/doc/fuse-3.7.0      &&
+install -v -m644    ../doc/{README.NFS,kernel.txt} \
+                    /usr/share/doc/fuse-3.7.0      &&
+cp -Rv ../doc/html  /usr/share/doc/fuse-3.7.0      &&
+cd ../../ && rm -rf fuse-3.7.0
+
+---------------------------------------------------------------
+
+tar -xf fuse-2.9.7.tar.gz && cd fuse-2.9.7 &&
+./configure --prefix=/usr    \
+            --disable-static \
+            --exec-prefix=/  &&
+make -j2 &&
+make DESTDIR=$PWD/Dest install &&
+install -vm755 Dest/lib/libfuse.so.2.9.7 /lib                  &&
+install -vm755 Dest/lib/libulockmgr.so.1.0.1 /lib                 &&
+ln -sfv ../../lib/libfuse.so.2.9.7 /usr/lib/libfuse.so         &&
+ln -sfv ../../lib/libulockmgr.so.1.0.1 /usr/lib/libulockmgr.so &&
+install -vm644  Dest/lib/pkgconfig/fuse.pc /usr/lib/pkgconfig &&                                                         
+install -vm4755 Dest/bin/fusermount       /bin                 &&
+install -vm755  Dest/bin/ulockmgr_server  /bin                 &&
+install -vm755  Dest/sbin/mount.fuse      /sbin                &&
+install -vdm755 /usr/include/fuse                              &&
+install -vm644  Dest/usr/include/*.h      /usr/include         &&
+install -vm644  Dest/usr/include/fuse/*.h /usr/include/fuse/   &&
+install -vm644  Dest/usr/share/man/man1/* /usr/share/man/man1  &&
+/sbin/ldconfig -v                                              &&
+cd .. && rm -rf fuse-2.9.7
+
+---------------------------------------------------------------
+
+tar -xf jfsutils-1.1.15.tar.gz && cd jfsutils-1.1.15 &&
+sed -i "/unistd.h/a#include <sys/types.h>"    fscklog/extract.c &&
+sed -i "/ioctl.h/a#include <sys/sysmacros.h>" libfs/devices.c   &&
+./configure &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf jfsutils-1.1.15
+
+----------------------------------------------------------------
+
+tar -xf mdadm-4.0.tar.xz && cd mdadm-4.0 &&
+sed 's@-Werror@@' -i Makefile &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf mdadm-4.0
+
+----------------------------------------------------------------
+
+tar -xf ntfs-3g_ntfsprogs-2017.3.23.tgz && cd ntfs-3g_ntfsprogs-2017.3.23 &&
+./configure --prefix=/usr        \
+            --disable-static     \
+            --with-fuse=internal &&
+make -j2 &&
+make -j2 install &&
+ln -sv ../bin/ntfs-3g /sbin/mount.ntfs &&
+ln -sv ntfs-3g.8 /usr/share/man/man8/mount.ntfs.8 &&
+chmod -v 4755 /bin/ntfs-3g &&
+cd .. && rm -rf ntfs-3g_ntfsprogs-2017.3.23
+
+------------------------------------------------------------------
+
+tar -xf gptfdisk-1.0.4.tar.gz && cd gptfdisk-1.0.4 &&
+patch -Np1 -i ../../../patches/gptfdisk-1.0.4-convenience-1.patch &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gptfdisk-1.0.4.tar.gz
+
+------------------------------------------------------------------
+
+tar -xf reiserfsprogs-3.6.27.tar.xz && cd reiserfsprogs-3.6.27 &&
+sed -i '/parse_time.h/i #define _GNU_SOURCE' lib/parse_time.c &&
+autoreconf -fiv             &&
+./configure --prefix=/usr   \
+            --sbindir=/sbin &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf reiserfsprogs-3.6.27
+
+------------------------------------------------------------------
+
+tar -xf smartmontools-7.0.tar.gz && cd smartmontools-7.0 &&
+./configure --prefix=/usr           \
+            --sysconfdir=/etc       \
+            --with-initscriptdir=no \
+            --docdir=/usr/share/doc/smartmontools-7.0 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf smartmontools-7.0
+
+------------------------------------------------------------------
+
+tar -xf sshfs-3.5.2.tar.xz && cd sshfs-3.5.2 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf sshfs-3.5.2
+
+-----------------------------------------------------------------
+
+tar -xf xfsprogs-5.2.1.tar.xz && cd xfsprogs-5.2.1 &&
+make DEBUG=-DNDEBUG     \
+     INSTALL_USER=root  \
+     INSTALL_GROUP=root \
+     LOCAL_CONFIGURE_OPTIONS="--enable-readline" &&
+make PKG_DOC_DIR=/usr/share/doc/xfsprogs-5.2.1 install     &&
+make PKG_DOC_DIR=/usr/share/doc/xfsprogs-5.2.1 install-dev &&
+rm -rfv /usr/lib/libhandle.a                                &&
+rm -rfv /lib/libhandle.{a,la,so}                            &&
+ln -sfv ../../lib/libhandle.so.1 /usr/lib/libhandle.so      &&
+sed -i "s@libdir='/lib@libdir='/usr/lib@" /usr/lib/libhandle.la &&
+cd .. && rm -rf xfsprogs-5.2.1
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

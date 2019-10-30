@@ -1,0 +1,1021 @@
+**************** FONTS **************************************************
+-------------------------------------------------------------------------
+
+install -v -d -m755 /usr/share/fonts/cantarell &&
+install -v -m644 ttf/*.ttf /usr/share/fonts/cantarell &&
+fc-cache -v /usr/share/fonts/cantarell
+
+**************** ICONS **************************************************
+-------------------------------------------------------------------------
+
+tar -xf hicolor-icon-theme-0.17.tar.xz && cd hicolor-icon-theme-0.17 &&
+./configure --prefix=/usr &&
+make -j2 install &&
+cd .. && rm -rf hicolor-icon-theme-0.17
+
+-------------------------------------------------------------------------
+
+tar -xf adwaita-icon-theme-3.34.0.tar.xz && cd adwaita-icon-theme-3.34.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf adwaita-icon-theme-3.34.0
+
+-------------------------------------------------------------------------
+
+tar -xf extra-cmake-modules-5.61.0.tar.xz && cd extra-cmake-modules-5.61.0 &&
+sed -i '/"lib64"/s/64//' kde-modules/KDEInstallDirs.cmake &&
+sed -e '/PACKAGE_INIT/i set(SAVE_PACKAGE_PREFIX_DIR "${PACKAGE_PREFIX_DIR}")' \
+    -e '/^include/a set(PACKAGE_PREFIX_DIR "${SAVE_PACKAGE_PREFIX_DIR}")' \
+    -i ECMConfig.cmake.in &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf extra-cmake-modules-5.61.0
+
+-------------------------------------------------------------------------
+
+tar -xf breeze-icons-5.61.0.tar.xz && cd breeze-icons-5.61.0 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DBUILD_TESTING=OFF         \
+      -Wno-dev .. &&
+make install &&
+cd ../../ && rm -rf breeze-icons-5.61.0
+
+-------------------------------------------------------------------------
+
+tar -xf icon-naming-utils-0.8.90.tar.bz2 && cd icon-naming-utils-0.8.90 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf icon-naming-utils-0.8.90
+
+-------------------------------------------------------------------------
+
+tar -xf gnome-icon-theme-3.12.0.tar.xz && cd gnome-icon-theme-3.12.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-icon-theme-3.12.0
+
+-------------------------------------------------------------------------
+
+tar -xf gnome-icon-theme-extras-3.12.0.tar.xz && cd gnome-icon-theme-extras-3.12.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-icon-theme-extras-3.12.0
+
+-------------------------------------------------------------------------
+
+tar -xf gnome-icon-theme-symbolic-3.12.0.tar.xz && cd gnome-icon-theme-symbolic-3.12.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-icon-theme-symbolic-3.12.0
+
+-------------------------------------------------------------------------
+
+tar -xf gnome-themes-extra-3.28.tar.xz && cd gnome-themes-extra-3.28 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-themes-extra-3.28
+
+-------------------------------------------------------------------------
+
+tar -xf oxygen-icons5-5.61.0.tar.xz && cd oxygen-icons5-5.61.0 &&
+sed -i '/( oxygen/ s/)/scalable )/' CMakeLists.txt &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr -Wno-dev .. &&
+make install &&
+cd ../../ && rm -rf oxygen-icons5-5.61.0
+
+-------------------------------------------------------------------------
+***************** GNOME *************************************************
+-------------------------------------------------------------------------
+
+tar -xf gsettings-desktop-schemas-3.34.0.tar.xz && cd gsettings-desktop-schemas-3.34.0 &&
+sed -i -r 's:"(/system):"/org/gnome\1:g' schemas/*.in &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gsettings-desktop-schemas-3.34.0
+
+------------------------------------------------------------------------
+
+tar -xf notification-daemon-3.20.0.tar.xz && cd notification-daemon-3.20.0 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf notification-daemon-3.20.0
+
+---------------------------------------------------------------------------
+
+tar -xf dconf-0.34.0.tar.xz && cd dconf-0.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc -Dbash_completion=false .. &&
+ninja &&
+ninja install &&
+cd .. &&
+tar -xf ../dconf-editor-3.34.2.tar.xz && cd dconf-editor-3.34.2  &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+cd .. && rm -rf dconf-0.34.0
+
+**ACTIVE BUG W/ MESON-0.52.0:
+[79/92] Linking target tests/gdbus-thread-leak.
+FAILED: tests/gdbus-thread-leak 
+cc  -o tests/gdbus-thread-leak 
+
+ --> Downgrade to Meson-0.51.2 (pip install meson==0.51.2)
+    --> FIXES issue with this version until bug is fixed
+
+---------------------------------------------------------------------------
+
+tar -xf gcr-3.34.0.tar.xz && cd gcr-3.34.0
+sed -i -r 's:"(/desktop):"/org/gnome\1:' schema/*.xml &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gcr-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-keyring-3.34.0.tar.xz && cd gnome-keyring-3.34.0 &&
+sed -i -r 's:"(/desktop):"/org/gnome\1:' schema/*.xml &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --with-pam-dir=/lib/security &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-keyring-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gjs-1.58.1.tar.xz && cd gjs-1.58.1 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gjs-1.58.1
+
+---------------------------------------------------------------------------
+
+tar -xf libsecret-0.19.1.tar.xz && cd libsecret-0.19.1 &&
+mkdir bld &&
+cd bld &&
+meson --prefix=/usr -Dgtk_doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libsecret-0.19.1
+
+---------------------------------------------------------------------------
+
+tar -xf rest-0.8.1.tar.xz && cd rest-0.8.1 &&
+./configure --prefix=/usr \
+    --with-ca-certificates=/etc/pki/tls/certs/ca-bundle.crt &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf rest-0.8.1
+
+---------------------------------------------------------------------------
+
+tar -xf totem-pl-parser-3.26.3.tar.xz && cd totem-pl-parser-3.26.3 &&
+mkdir build &&
+cd    build &&
+meson --prefix /usr --default-library shared .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf totem-pl-parser-3.26.3
+
+---------------------------------------------------------------------------
+
+tar -xf vte-0.58.2.tar.xz && cd vte-0.58.2 &&
+mkdir build &&
+cd    build &&
+meson  --prefix=/usr --sysconfdir=/etc -Dfribidi=false &&
+ninja  &&
+ninja install &&
+cd ../../ && rm -rf vte-0.58.2
+
+---------------------------------------------------------------------------
+
+tar -xf yelp-xsl-3.34.0.tar.xz && cd yelp-xsl-3.34.0 &&
+./configure --prefix=/usr &&
+make install &&
+cd .. && rm -rf yelp-xsl-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf GConf-3.2.6.tar.xz && cd GConf-3.2.6 &&
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --disable-orbit \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+ln -s gconf.xml.defaults /etc/gconf/gconf.xml.system &&
+cd .. && rm -rf GConf-3.2.6
+
+---------------------------------------------------------------------------
+
+tar -xf geocode-glib-3.26.1.tar.xz && cd geocode-glib-3.26.1 &&
+mkdir build                                   &&
+cd    build                                   &&
+meson --prefix /usr -Denable-gtk-doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf geocode-glib-3.26.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-autoar-0.2.3.tar.xz && cd gnome-autoar-0.2.3 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-autoar-0.2.3
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-desktop-3.34.1.tar.xz && cd gnome-desktop-3.34.1 &&
+mkdir build &&
+cd build &&
+meson --prefix=/usr                 \
+      -Dgnome_distributor="BLFS" .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-desktop-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-menus-3.32.0.tar.xz && cd gnome-menus-3.32.0 &&
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-menus-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-video-effects-0.5.0.tar.xz && cd gnome-video-effects-0.5.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-video-effects-0.5.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-online-accounts-3.34.1.tar.xz && cd gnome-online-accounts-3.34.1 &&
+./configure --prefix=/usr \
+            --disable-static \
+            --with-google-client-secret=5ntt6GbbkjnTVXx-MSxbmx5e \
+            --with-google-client-id=595013732528-llk8trb03f0ldpqq6nprjp1s79596646.apps.googleusercontent.com &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-online-accounts-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf grilo-0.3.10.tar.xz && cd grilo-0.3.10 &&
+mkdir build   &&
+cd    build   &&
+meson --prefix=/usr \
+      --libexecdir=/usr/lib \
+      -Denable-gtk-doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf grilo-0.3.10
+
+---------------------------------------------------------------------------
+
+tar -xf libchamplain-0.12.19.tar.xz && cd libchamplain-0.12.19 &&
+cd build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libchamplain-0.12.19
+
+---------------------------------------------------------------------------
+
+tar -xf libgdata-0.17.11.tar.xz && cd libgdata-0.17.11 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dgtk_doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libgdata-0.17.11
+
+---------------------------------------------------------------------------
+
+tar -xf libgee-0.20.2.tar.xz && cd libgee-0.20.2 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libgee-0.20.2
+
+---------------------------------------------------------------------------
+
+tar -xf libgtop-2.40.0.tar.xz && cd libgtop-2.40.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libgtop-2.40.0
+
+---------------------------------------------------------------------------
+
+tar -xf libgweather-3.34.0.tar.xz && cd libgweather-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libgweather-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf libpeas-1.24.0.tar.xz && cd libpeas-1.24.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libpeas-1.24.0
+
+---------------------------------------------------------------------------
+
+tar -xf libwnck-3.32.0.tar.xz && cd libwnck-3.32.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dbuildtype=release .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf libwnck-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf evolution-data-server-3.34.1.tar.xz && cd evolution-data-server-3.34.1 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr   \
+      -DSYSCONF_INSTALL_DIR=/etc    \
+      -DENABLE_VALA_BINDINGS=ON     \
+      -DENABLE_INSTALLED_TESTS=ON   \
+      -DENABLE_GOOGLE=ON            \
+      -DWITH_OPENLDAP=ON           \
+      -DWITH_KRB5=ON               \
+      -DENABLE_INTROSPECTION=ON     \
+      -DENABLE_GTK_DOC=OFF          \
+      .. &&
+make -j2 &&
+make install &&
+cd ../../ && rm -rf evolution-data-server-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf folks-0.13.1.tar.xz && cd folks-0.13.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf folks-0.13.1
+
+---------------------------------------------------------------------------
+
+tar -xf gfbgraph-0.2.3.tar.xz && cd gfbgraph-0.2.3 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make libgfbgraphdocdir=/usr/share/doc/gfbgraph-0.2.3 install &&
+cd .. && rm -rf gfbgraph-0.2.3
+
+---------------------------------------------------------------------------
+
+tar -xf tracker-2.3.1.tar.xz && cd tracker-2.3.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+glib-compile-schemas /usr/share/glib-2.0/schemas &&
+cd ../../ && rm -rf tracker-2.3.1
+
+---------------------------------------------------------------------------
+
+tar -xf gexiv2-0.12.0.tar.xz && cd gexiv2-0.12.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gexiv2-0.12.0
+
+---------------------------------------------------------------------------
+
+tar -xf tracker-miners-2.3.1.tar.xz && cd tracker-miners-2.3.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf tracker-miners-2.3.1
+
+---------------------------------------------------------------------------
+
+tar -xf gsound-1.0.2.tar.xz && cd gsound-1.0.2 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gsound-1.0.2
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-backgrounds-3.34.0.tar.xz && cd gnome-backgrounds-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-backgrounds-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gvfs-1.42.1.tar.xz && cd gvfs-1.42.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr     \
+      --sysconfdir=/etc \
+      -Dgphoto2=false   \
+      -Dnfs=false       \
+      -Dafc=false       \
+      -Dbluray=false    \
+      -Dmtp=false       \
+      -Ddnssd=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gvfs-1.42.1
+
+---------------------------------------------------------------------------
+
+tar -xf nautilus-3.34.1.tar.xz && cd nautilus-3.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr      \
+      --sysconfdir=/etc  \
+      -Dselinux=false    \
+      -Dpackagekit=false \
+      .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf nautilus-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf zenity-3.32.0.tar.xz && cd zenity-3.32.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf zenity-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-bluetooth-3.34.0.tar.xz && cd gnome-bluetooth-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-bluetooth-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-settings-daemon-3.34.1.tar.xz && cd gnome-settings-daemon-3.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-settings-daemon-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf polkit-gnome-0.105.tar.xz && cd polkit-gnome-0.105 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf polkit-gnome-0.105
+
+---------------------------------------------------------------------------
+
+tar -xf network-manager-applet-1.8.24.tar.xz && cd network-manager-applet-1.8.24 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr     \
+      --sysconfdir=/etc \
+      -Dselinux=false   \
+      -Dteam=true       \
+      -Dmobile_broadband_provider_info=false \
+      -Dgtk_doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf network-manager-applet-1.8.24
+
+---------------------------------------------------------------------------
+
+tar -xf cheese-3.34.0.tar.xz && cd cheese-3.34.0 &&
+sed -i "s/&version;/3.34.0/" docs/reference/cheese{,-docs}.xml &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dgtk_doc=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf cheese-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-color-manager-3.32.0.tar.xz && cd gnome-color-manager-3.32.0 &&
+sed /subdir\(\'man/d -i meson.build &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-color-manager-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-control-center-3.34.1.tar.xz && cd gnome-control-center-3.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-control-center-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf mutter-3.34.1.tar.xz && cd mutter-3.34.1 &&
+patch -Np1 -i ../../../patches/mutter-3.34.1-upstream_fixes-1.patch &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dprofiler=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf mutter-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-shell-3.34.1.tar.xz && cd gnome-shell-3.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-shell-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-shell-extensions-3.34.1.tar.xz && cd gnome-shell-extensions-3.34.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja install &&
+cd ../../ && rm -rf gnome-shell-extensions-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-session-3.34.1.tar.xz && cd gnome-session-3.34.1 &&
+sed 's@/bin/sh@/bin/sh -l@' -i gnome-session/gnome-session.in &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-session-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gdm-3.34.1.tar.xz && cd gdm-3.34.1 &&
+./configure --prefix=/usr         \
+            --sysconfdir=/etc     \
+            --localstatedir=/var  \
+            --without-plymouth    \
+            --disable-static      \
+            --enable-gdm-xsession \
+            --with-pam-mod-dir=/lib/security &&
+make -j2 &&
+make -j2 install &&
+install -v -m644 data/gdm.service /lib/systemd/system/gdm.service &&
+cd .. && rm -rf gdm-3.34.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-user-docs-3.34.0.tar.xz && cd gnome-user-docs-3.34.0 &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-user-docs-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf yelp-3.34.0.tar.xz && cd yelp-3.34.0 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+update-desktop-database &&
+cd .. && rm -rf yelp-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf baobab-3.34.0.tar.xz && cd baobab-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf baobab-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf brasero-3.12.2.tar.xz && cd brasero-3.12.2 &&
+./configure --prefix=/usr                \
+            --enable-compile-warnings=no \
+            --enable-cxx-warnings=no     &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf brasero-3.12.2
+
+---------------------------------------------------------------------------
+
+tar -xf eog-3.34.0.tar.xz && cd eog-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf eog-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf evince-3.34.0.tar.xz && cd evince-3.34.0 &&
+./configure --prefix=/usr           \
+            --enable-introspection  \
+            --disable-static        &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf evince-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf seahorse-3.34.tar.xz && cd seahorse-3.34 &&
+sed -i -r 's:"(/apps):"/org/gnome\1:' data/*.xml &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf seahorse-3.34
+
+---------------------------------------------------------------------------
+
+tar -xf evolution-3.34.0.tar.xz && cd evolution-3.34.0 &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DSYSCONF_INSTALL_DIR=/etc  \
+      -DENABLE_INSTALLED_TESTS=ON \
+      -DENABLE_PST_IMPORT=OFF     \
+      -DENABLE_GTKSPELL=OFF       \
+      -DENABLE_YTNEF=OFF          \
+      -DENABLE_CONTACT_MAPS=OFF   \
+      -G Ninja .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf evolution-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf file-roller-3.32.2.tar.xz && cd file-roller-3.32.2 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dpackagekit=false .. &&
+ninja &&
+ninja install &&
+chmod -v 0755 /usr/libexec/file-roller/isoinfo.sh &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd ../../ && rm -rf file-roller-3.32.2
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-calculator-3.34.0.tar.xz && cd gnome-calculator-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-calculator-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-disk-utility-3.34.0.tar.xz && cd gnome-disk-utility-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-disk-utility-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-logs-3.34.0.tar.xz && cd gnome-logs-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-logs-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-nettool-3.8.1.tar.xz && cd gnome-nettool-3.8.1 &&
+sed -i 's/%s ping/%s/' src/ping.h &&
+sed -i '27 s/%s6/%s /' src/ping.h &&
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-nettool-3.8.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-power-manager-3.32.0.tar.xz && cd gnome-power-manager-3.32.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-power-manager-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-screenshot-3.32.0.tar.xz && cd gnome-screenshot-3.32.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-screenshot-3.32.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-system-monitor-3.32.1.tar.xz && cd gnome-system-monitor-3.32.1 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-system-monitor-3.32.1
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-terminal-3.34.0.tar.xz && cd gnome-terminal-3.34.0 &&
+./configure --prefix=/usr       \
+            --disable-static    &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnome-terminal-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-tweaks-3.34.0.tar.xz && cd gnome-tweaks-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-tweaks-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gnome-weather-3.34.0.tar.xz && cd gnome-weather-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gnome-weather-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf gucharmap-12.0.1.tar.xz && cd gucharmap-12.0.1 &&
+LIBS="-ldl"               \
+./configure --prefix=/usr \
+            --enable-vala \
+            --with-unicode-data=download &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gucharmap-12.0.1
+
+---------------------------------------------------------------------------
+
+tar -xf vinagre-3.22.0.tar.xz && cd vinagre-3.22.0 &&
+./configure --prefix=/usr \
+            --enable-compile-warnings=minimum &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf vinagre-3.22.0
+
+---------------------------------------------------------------------------
+
+tar -xf vino-3.22.0.tar.xz && cd vino-3.22.0 &&
+./configure --prefix=/usr --sysconfdir=/etc &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf vino-3.22.0
+
+---------------------------------------------------------------------------
+
+tar -xf gedit-3.34.0.tar.xz && cd gedit-3.34.0 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr -Dbuildtype=release .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gedit-3.34.0
+
+---------------------------------------------------------------------------
+
+tar -xf bluefish-2.2.10.tar.bz2 && cd bluefish-2.2.10 &&
+./configure --prefix=/usr --docdir=/usr/share/doc/bluefish-2.2.10 &&
+make -j2 &&
+make -j2 install &&
+gtk-update-icon-cache -t -f --include-image-data /usr/share/icons/hicolor &&
+update-desktop-database
+cd .. && rm -rf bluefish-2.2.10
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+tar -xf && cd &&
+
+cd .. && rm -rf 
+
+---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,427 @@
+*********** SECURITY ******************************************************
+--------------------------------------------------------------------------
+
+tar -xf p11-kit-0.23.16.1.tar.gz && cd p11-kit-0.23.16.1 &&
+sed '20,$ d' -i trust/trust-extract-compat.in &&
+cat >> trust/trust-extract-compat.in << "EOF"
+# Copy existing anchor modifications to /etc/ssl/local
+/usr/libexec/make-ca/copy-trust-modifications
+
+# Generate a new trust store
+/usr/sbin/make-ca -f -g
+EOF
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --with-trust-paths=/etc/pki/anchors &&
+make -j2 &&
+make -j2 install &&
+ln -sfv /usr/libexec/p11-kit/trust-extract-compat \
+        /usr/bin/update-ca-certificates &&
+ln -sfv ./pkcs11/p11-kit-trust.so /usr/lib/libnssckbi.so &&
+cd .. && rm -rf p11-kit-0.23.16.1
+
+--------------------------------------------------------------------------
+
+tar -xf make-ca-1.5.tar.xz && cd make-ca-1.5 &&
+make install &&
+install -vdm755 /etc/ssl/local &&
+/usr/sbin/make-ca -g &&
+cd .. && rm -rf make-ca-1.5
+
+---------------------------------------------------------------------------
+
+tar -xf krb5-1.17.tar.gz && cd krb5-1.17 &&
+cd src && 
+sed -i -e 's@\^u}@^u cols 300}@' tests/dejagnu/config/default.exp     &&
+sed -i -e '/eq 0/{N;s/12 //}'    plugins/kdb/db2/libdb2/test/run.test &&
+./configure --prefix=/usr            \
+            --sysconfdir=/etc        \
+            --localstatedir=/var/lib \
+            --with-system-et         \
+            --with-system-ss         \
+            --with-system-verto=no   \
+            --enable-dns-for-realm &&
+make -j2 &&
+make -j2 install &&
+for f in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv \
+         kdb5 kdb_ldap krad krb5 krb5support verto ; do
+
+    find /usr/lib -type f -name "lib$f*.so*" -exec chmod -v 755 {} \;    
+done          &&
+mv -v /usr/lib/libkrb5.so.3*        /lib &&
+mv -v /usr/lib/libk5crypto.so.3*    /lib &&
+mv -v /usr/lib/libkrb5support.so.0* /lib &&
+ln -v -sf ../../lib/libkrb5.so.3.3        /usr/lib/libkrb5.so        &&
+ln -v -sf ../../lib/libk5crypto.so.3.1    /usr/lib/libk5crypto.so    &&
+ln -v -sf ../../lib/libkrb5support.so.0.1 /usr/lib/libkrb5support.so &&
+mv -v /usr/bin/ksu /bin &&
+chmod -v 755 /bin/ksu   &&
+install -v -dm755 /usr/share/doc/krb5-1.17 &&
+cp -vfr ../doc/*  /usr/share/doc/krb5-1.17 &&
+cd ../../ && rm -rf krb5-1.17
+
+----------------------------------------------------------------------------
+
+tar -xf cryptsetup-2.0.6.tar.xz && cd cryptsetup-2.0.6 &&
+./configure --prefix=/usr \
+            --with-crypto_backend=openssl &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf cryptsetup-2.0.6
+
+------------------------------------------------------------------------------
+
+tar -xf gpgme-1.13.1.tar.bz2 && cd gpgme-1.13.1 &&
+./configure --prefix=/usr --disable-gpg-test &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gpgme-1.13.1
+
+------------------------------------------------------------------------------
+
+tar -xf nss-3.46.1.tar.gz && cd nss-3.46.1 &&
+patch -Np1 -i ../../../patches/nss-3.46.1-standalone-1.patch &&
+cd nss &&
+make -j1 BUILD_OPT=1                  \
+  NSPR_INCLUDE_DIR=/usr/include/nspr  \
+  USE_SYSTEM_ZLIB=1                   \
+  ZLIB_LIBS=-lz                       \
+  NSS_ENABLE_WERROR=0                 \
+  $([ $(uname -m) = x86_64 ] && echo USE_64=1) \
+  $([ -f /usr/include/sqlite3.h ] && echo NSS_USE_SYSTEM_SQLITE=1)  &&
+cd ../dist                                                          &&
+install -v -m755 Linux*/lib/*.so              /usr/lib              &&
+install -v -m644 Linux*/lib/{*.chk,libcrmf.a} /usr/lib              &&
+install -v -m755 -d                           /usr/include/nss      &&
+cp -v -RL {public,private}/nss/*              /usr/include/nss      &&
+chmod -v 644                                  /usr/include/nss/*    &&
+install -v -m755 Linux*/bin/{certutil,nss-config,pk12util} /usr/bin &&
+install -v -m644 Linux*/lib/pkgconfig/nss.pc  /usr/lib/pkgconfig    &&
+ln -sfv ./pkcs11/p11-kit-trust.so /usr/lib/libnssckbi.so            &&
+cd ../../ && rm -rf nss-3.46.1
+
+------------------------------------------------------------------------------
+
+tar -xf volume_key-0.3.12.tar.gz && cd volume_key-volume_key-0.3.12 &&
+autoreconf -fiv              &&
+./configure --prefix=/usr    \
+            --without-python &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf volume_key-volume_key-0.3.12
+
+-------------------------------------------------------------------------------
+
+tar -xf nettle-3.5.1.tar.gz && cd nettle-3.5.1 &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+chmod   -v   755 /usr/lib/lib{hogweed,nettle}.so &&
+install -v -m755 -d /usr/share/doc/nettle-3.5.1 &&
+install -v -m644 nettle.html /usr/share/doc/nettle-3.5.1 &&
+cd .. && rm -rf nettle-3.5.1
+
+-------------------------------------------------------------------------------
+
+tar -xf gnutls-3.6.9.tar.xz && cd gnutls-3.6.9 &&
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/gnutls-3.6.9 \
+            --disable-guile \
+            --with-default-trust-store-pkcs11="pkcs11:" \
+	    --enable-openssl-compatibility              &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnutls-3.6.9
+
+-------------------------------------------------------------------------------
+
+tar -xf cyrus-sasl-2.1.27.tar.gz && cd cyrus-sasl-2.1.27 &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --enable-auth-sasldb \
+            --with-dbpath=/var/lib/sasl/sasldb2 \
+            --with-saslauthd=/var/run/saslauthd &&
+make -j1 &&
+make install &&
+install -v -dm755                          /usr/share/doc/cyrus-sasl-2.1.27/html &&
+install -v -m644  saslauthd/LDAP_SASLAUTHD /usr/share/doc/cyrus-sasl-2.1.27      &&
+install -v -m644  doc/legacy/*.html        /usr/share/doc/cyrus-sasl-2.1.27/html &&
+install -v -dm700 /var/lib/sasl                                                  &&
+cd .. && rm -rf cyrus-sasl-2.1.27
+
+-------------------------------------------------------------------------------
+
+tar -xf haveged-1.9.2.tar.gz && cd haveged-1.9.2
+./configure --prefix=/usr &&
+make -j2 &&
+make -j2 install &&
+mkdir -pv    /usr/share/doc/haveged-1.9.2 &&
+cp -v README /usr/share/doc/haveged-1.9.2 &&
+cd .. && rm -rf haveged-1.9.2
+
+--------------------------------------------------------------------------------
+
+tar -xf iptables-1.8.3.tar.bz2 && cd iptables-1.8.3 &&
+./configure --prefix=/usr      \
+            --sbindir=/sbin    \
+            --disable-nftables \
+            --enable-libipq    \
+            --with-xtlibdir=/lib/xtables &&
+make -j2 &&
+make -j2 install &&
+ln -sfv ../../sbin/xtables-legacy-multi /usr/bin/iptables-xml &&
+for file in ip4tc ip6tc ipq iptc xtables
+do
+  mv -v /usr/lib/lib${file}.so.* /lib &&
+  ln -sfv ../../lib/$(readlink /usr/lib/lib${file}.so) /usr/lib/lib${file}.so
+done &&
+cd .. && rm -rf iptables-1.8.3
+
+--------------------------------------------------------------------------------
+
+tar -xf Linux-PAM-1.3.1.tar.xz && cd Linux-PAM-1.3.1 &&
+sed -e 's/dummy links/dummy lynx/'                                     \
+    -e 's/-no-numbering -no-references/-force-html -nonumbers -stdin/' \
+    -i configure &&
+./configure --prefix=/usr                    \
+            --sysconfdir=/etc                \
+            --libdir=/usr/lib                \
+            --enable-securedir=/lib/security \
+            --docdir=/usr/share/doc/Linux-PAM-1.3.1 &&
+make -j2 &&
+install -v -m755 -d /etc/pam.d &&
+cat > /etc/pam.d/other << "EOF"
+auth     required       pam_deny.so
+account  required       pam_deny.so
+password required       pam_deny.so
+session  required       pam_deny.so
+EOF &&
+rm -fv /etc/pam.d/* &&
+make -j2 install &&
+chmod -v 4755 /sbin/unix_chkpwd &&
+for file in pam pam_misc pamc
+do
+  mv -v /usr/lib/lib${file}.so.* /lib &&
+  ln -sfv ../../lib/$(readlink /usr/lib/lib${file}.so) /usr/lib/lib${file}.so
+done &&
+cd .. && rm -rf Linux-PAM-1.3.1
+
+**REINSTALL AFTERWARDS:
+ - Shadow-4.7
+ - Systemd-243
+
+----------------------------------------------------------------------------------
+
+tar -xf shadow-4.7.tar.xz && cd shadow-4.7 &&
+sed -i 's/groups$(EXEEXT) //' src/Makefile.in &&
+
+find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \; &&
+find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \; &&
+find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \; &&
+
+sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
+       -e 's@/var/spool/mail@/var/mail@' etc/login.defs &&
+
+sed -i 's/1000/999/' etc/useradd                           &&
+
+./configure --sysconfdir=/etc --with-group-name-max-length=32 &&
+make -j2 &&
+make -j2 install &&
+mv -v /usr/bin/passwd /bin &&
+cd .. && rm -rf shadow-4.7
+
+---------------------------------------------------------------------------------
+
+tar -xf libcap-2.27.tar.xz && cd libcap-2.27 &&
+make -C pam_cap &&
+install -v -m755 pam_cap/pam_cap.so /lib/security &&
+install -v -m644 pam_cap/capability.conf /etc/security &&
+mv -v /etc/pam.d/system-auth{,.bak} &&
+cat > /etc/pam.d/system-auth << "EOF" &&
+# Begin /etc/pam.d/system-auth
+
+auth      optional    pam_cap.so
+EOF
+tail -n +3 /etc/pam.d/system-auth.bak >> /etc/pam.d/system-auth &&
+cd .. && rm -rf libcap-2.27
+
+---------------------------------------------------------------------------------
+
+tar -xf liboauth-1.0.3.tar.gz && cd liboauth-1.0.3 &&
+patch -Np1 -i ../../../patches/liboauth-1.0.3-openssl-1.1.0-3.patch &&
+./configure --prefix=/usr --disable-static &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf liboauth-1.0.3
+
+---------------------------------------------------------------------------------
+
+tar -xf libpwquality-1.4.0.tar.bz2 && cd libpwquality-1.4.0 &&
+./configure --prefix=/usr --disable-static \
+            --with-securedir=/lib/security \
+            --with-python-binary=python3   &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf libpwquality-1.4.0
+
+---------------------------------------------------------------------------------
+
+tar -xf openssh-8.1p1.tar.gz && cd openssh-8.1p1 &&
+./configure --prefix=/usr                     \
+            --sysconfdir=/etc/ssh             \
+            --with-md5-passwords              \
+            --with-privsep-path=/var/lib/sshd &&
+make -j2 &&
+make -j2 install &&
+install -v -m755    contrib/ssh-copy-id /usr/bin     &&
+
+install -v -m644    contrib/ssh-copy-id.1 \
+                    /usr/share/man/man1              &&
+install -v -m755 -d /usr/share/doc/openssh-8.0p1     &&
+install -v -m644    INSTALL LICENCE OVERVIEW README* \
+                    /usr/share/doc/openssh-8.0p1     &&
+cd .. && rm -rf openssh-8.1p1
+
+---------------------------------------------------------------------------------
+
+tar -xf polkit-0.116.tar.gz && cd polkit-0.116 &&
+sed -i "s:/sys/fs/cgroup/systemd/:/sys:g" configure &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --disable-static     \
+            --with-os-type=LFS --enable-introspection=yes   &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf polkit-0.116
+
+---------------------------------------------------------------------------------
+
+tar -xf openssh-8.1p1.tar.gz && cd openssh-8.1p1 &&
+cd contrib &&
+make gnome-ssh-askpass2 &&
+install -v -d -m755 /usr/libexec/openssh/contrib  &&
+install -v -m755    gnome-ssh-askpass2 \
+                    /usr/libexec/openssh/contrib  &&
+ln -sv -f contrib/gnome-ssh-askpass2 \
+                    /usr/libexec/openssh/ssh-askpass &&
+cd ../../ && rm -rf openssh-8.1p1
+
+--------------------------------------------------------------------------------
+
+tar -xf stunnel-5.55.tar.gz && cd stunnel-5.55 &&
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var &&
+make -j2 &&
+make docdir=/usr/share/doc/stunnel-5.55 install &&
+install -v -m644 tools/stunnel.service /lib/systemd/system &&
+make cert &&
+cd .. && rm -rf stunnel-5.55
+
+--------------------------------------------------------------------------------
+
+tar -xf sudo-1.8.27.tar.gz && cd sudo-1.8.27 &&
+./configure --prefix=/usr              \
+            --libexecdir=/usr/lib      \
+            --with-secure-path         \
+            --with-all-insults         \
+            --with-env-editor          \
+            --docdir=/usr/share/doc/sudo-1.8.27 \
+            --with-passprompt="[sudo] password for %p: " &&
+make -j2 &&
+make -j2 install &&
+ln -sfv libsudo_util.so.0.0.0 /usr/lib/sudo/libsudo_util.so.0 &&
+cd .. && rm -rf sudo-1.8.27
+
+--------------------------------------------------------------------------------
+
+tar -xf tripwire-open-source-2.4.3.7.tar.gz && cd tripwire-open-source-2.4.3.7 &&
+sed -e '/^CLOBBER/s/false/true/'         \
+    -e 's|TWDB="${prefix}|TWDB="/var|'   \
+    -e '/TWMAN/ s|${prefix}|/usr/share|' \
+    -e '/TWDOCS/s|${prefix}/doc/tripwire|/usr/share/doc/tripwire-2.4.3.7|' \
+    -i installer/install.cfg                               &&
+find . -name Makefile.am | xargs                           \
+    sed -i 's/^[[:alpha:]_]*_HEADERS.*=/noinst_HEADERS =/' &&
+sed '/dist/d' -i man/man?/Makefile.am                      &&
+autoreconf -fi                                             &&
+./configure --prefix=/usr --sysconfdir=/etc/tripwire       &&
+make -j2 &&
+make -j2 install &&
+cp -v policy/*.txt /usr/share/doc/tripwire-2.4.3.7 &&
+cd .. && rm -rf tripwire-open-source-2.4.3.7
+
+----------------------------------------------------------------------------------
+
+tar -xf gnupg-2.2.17.tar.bz2 && cd gnupg-2.2.17
+sed -e '/noinst_SCRIPTS = gpg-zip/c sbin_SCRIPTS += gpg-zip' \
+    -i tools/Makefile.in &&
+./configure --prefix=/usr            \
+            --enable-symcryptrun     \
+            --localstatedir=/var     \
+            --docdir=/usr/share/doc/gnupg-2.2.17 &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf gnupg-2.2.17
+
+---------------------------------------------------------------------------------
+
+tar -xf nftables-0.9.2.tar.bz2 && cd nftables-0.9.2 &&
+./configure --prefix=/usr     \
+            --sbindir=/sbin   \
+            --sysconfdir=/etc \
+            --with-python-bin=/usr/bin/python3 --with-json --with-xtables &&
+make -j2 &&
+make -j2 install &&
+mv /usr/lib/libnftables.so.* /lib &&
+ln -sfv ../../lib/$(readlink /usr/lib/libnftables.so) /usr/lib/libnftables.so &&
+cd .. && rm -rf nftables-0.9.2
+
+---------------------------------------------------------------------------------
+
+tar -xf firewalld-0.7.2.tar.gz && cd firewalld-0.7.2 &&
+patch -Np1 -i ../../../patches/firewalld-0.7.2-builtin-1.patch &&
+PYTHON=/usr/bin/python3           \
+    ./configure --sysconfdir=/etc \
+                --without-ipset --without-ebtables --without-ebtables-restore  &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf firewalld-0.7.2
+
+---------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

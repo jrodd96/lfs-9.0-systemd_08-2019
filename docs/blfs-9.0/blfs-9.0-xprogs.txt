@@ -1,0 +1,39 @@
+*********** OTHER X-BASED PROGRAMS **********************************************
+---------------------------------------------------------------------------------
+
+tar -xf inkscape-0.92.4.tar.bz2 && cd inkscape-0.92.4 &&
+sed -e 's|new Lexer(xref, obj)|obj|g' -i src/extension/internal/pdfinput/pdf-parser.cpp &&
+patch -Np1 -i ../../../patches/inkscape-0.92.4-use_versioned_ImageMagick6-1.patch &&
+patch -Np1 -i ../../../patches/inkscape-0.92.4-upstream_fixes-1.patch &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release  \
+      ..                          &&
+make -j2 &&
+make -j2 install &&
+rm -v /usr/lib/inkscape/lib*_LIB.a &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd ../../ && rm -rf inkscape-0.92.4
+
+---------------------------------------------------------------------------------
+
+tar -xf firefox-68.2.0esr.source.tar.xz && cd firefox-68.2.0 &&
+patch -Np1 -i ../../../patches/firefox-68.2.0esr-system_graphite2_harfbuzz-1.patch &&
+echo "AIzaSyDxKL42zsPjbke5O8_rPVpVrLrJ8aeE9rQ" > google-key &&
+echo "d2284a20-0505-4927-a809-7ffaf4d91e55" > mozilla-key &&
+export CC=gcc CXX=g++ &&
+export MOZBUILD_STATE_PATH=${PWD}/mozbuild &&
+./mach build &&
+./mach install                                                  &&
+mkdir -pv  /usr/lib/mozilla/plugins                             &&
+ln    -sfv ../../mozilla/plugins /usr/lib/firefox/browser/      &&
+unset CC CXX MOZBUILD_STATE_PATH &&
+cd .. && rm -rf firefox-68.2.0
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
