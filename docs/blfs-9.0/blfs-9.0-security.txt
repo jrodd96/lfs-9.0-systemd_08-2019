@@ -40,7 +40,7 @@ sed -i -e '/eq 0/{N;s/12 //}'    plugins/kdb/db2/libdb2/test/run.test &&
             --with-system-et         \
             --with-system-ss         \
             --with-system-verto=no   \
-            --enable-dns-for-realm &&
+            --enable-dns-for-realm --with-ldap &&
 make -j2 &&
 make -j2 install &&
 for f in gssapi_krb5 gssrpc k5crypto kadm5clnt kadm5srv \
@@ -79,8 +79,8 @@ cd .. && rm -rf gpgme-1.13.1
 
 ------------------------------------------------------------------------------
 
-tar -xf nss-3.46.1.tar.gz && cd nss-3.46.1 &&
-patch -Np1 -i ../../../patches/nss-3.46.1-standalone-1.patch &&
+tar -xf nss-3.47.tar.gz && cd nss-3.47 &&
+patch -Np1 -i ../../../patches/nss-3.47-standalone-1.patch &&
 cd nss &&
 make -j1 BUILD_OPT=1                  \
   NSPR_INCLUDE_DIR=/usr/include/nspr  \
@@ -98,7 +98,7 @@ chmod -v 644                                  /usr/include/nss/*    &&
 install -v -m755 Linux*/bin/{certutil,nss-config,pk12util} /usr/bin &&
 install -v -m644 Linux*/lib/pkgconfig/nss.pc  /usr/lib/pkgconfig    &&
 ln -sfv ./pkcs11/p11-kit-trust.so /usr/lib/libnssckbi.so            &&
-cd ../../ && rm -rf nss-3.46.1
+cd ../../ && rm -rf nss-3.47
 
 ------------------------------------------------------------------------------
 
@@ -123,15 +123,15 @@ cd .. && rm -rf nettle-3.5.1
 
 -------------------------------------------------------------------------------
 
-tar -xf gnutls-3.6.9.tar.xz && cd gnutls-3.6.9 &&
+tar -xf gnutls-3.6.10.tar.xz && cd gnutls-3.6.10 &&
 ./configure --prefix=/usr \
-            --docdir=/usr/share/doc/gnutls-3.6.9 \
+            --docdir=/usr/share/doc/gnutls-3.6.10 \
             --disable-guile \
             --with-default-trust-store-pkcs11="pkcs11:" \
 	    --enable-openssl-compatibility              &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf gnutls-3.6.9
+cd .. && rm -rf gnutls-3.6.10
 
 -------------------------------------------------------------------------------
 
@@ -164,7 +164,6 @@ cd .. && rm -rf haveged-1.9.2
 tar -xf iptables-1.8.3.tar.bz2 && cd iptables-1.8.3 &&
 ./configure --prefix=/usr      \
             --sbindir=/sbin    \
-            --disable-nftables \
             --enable-libipq    \
             --with-xtlibdir=/lib/xtables &&
 make -j2 &&
@@ -256,13 +255,13 @@ cd .. && rm -rf liboauth-1.0.3
 
 ---------------------------------------------------------------------------------
 
-tar -xf libpwquality-1.4.0.tar.bz2 && cd libpwquality-1.4.0 &&
+tar -xf libpwquality-1.4.1.tar.bz2 && cd libpwquality-1.4.1 &&
 ./configure --prefix=/usr --disable-static \
             --with-securedir=/lib/security \
             --with-python-binary=python3   &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf libpwquality-1.4.0
+cd .. && rm -rf libpwquality-1.4.1
 
 ---------------------------------------------------------------------------------
 
@@ -274,7 +273,6 @@ tar -xf openssh-8.1p1.tar.gz && cd openssh-8.1p1 &&
 make -j2 &&
 make -j2 install &&
 install -v -m755    contrib/ssh-copy-id /usr/bin     &&
-
 install -v -m644    contrib/ssh-copy-id.1 \
                     /usr/share/man/man1              &&
 install -v -m755 -d /usr/share/doc/openssh-8.0p1     &&
@@ -321,18 +319,18 @@ cd .. && rm -rf stunnel-5.55
 
 --------------------------------------------------------------------------------
 
-tar -xf sudo-1.8.27.tar.gz && cd sudo-1.8.27 &&
+tar -xf sudo-1.8.29.tar.gz && cd sudo-1.8.29 &&
 ./configure --prefix=/usr              \
             --libexecdir=/usr/lib      \
             --with-secure-path         \
             --with-all-insults         \
             --with-env-editor          \
-            --docdir=/usr/share/doc/sudo-1.8.27 \
-            --with-passprompt="[sudo] password for %p: " &&
+            --docdir=/usr/share/doc/sudo-1.8.29 \
+            --with-passprompt="[sudo] password for %p: " --with-pam --with-ldap --with-badpass-message="NOPE..." --with-password-timeout=15  --enable-zlib &&
 make -j2 &&
 make -j2 install &&
 ln -sfv libsudo_util.so.0.0.0 /usr/lib/sudo/libsudo_util.so.0 &&
-cd .. && rm -rf sudo-1.8.27
+cd .. && rm -rf sudo-1.8.29
 
 --------------------------------------------------------------------------------
 

@@ -1,8 +1,8 @@
 ************ DATABASES ********************************************
 -------------------------------------------------------------------
 
-tar -xf sqlite-autoconf-3300000.tar.gz && cd sqlite-autoconf-3300000 &&
-unzip -q ../sqlite-doc-3300000.zip &&
+tar -xf sqlite-autoconf-3300100.tar.gz && cd sqlite-autoconf-3300100 &&
+unzip -q ../sqlite-doc-3300100.zip &&
 ./configure --prefix=/usr     \
             --disable-static  \
             --enable-fts5     \
@@ -16,7 +16,9 @@ unzip -q ../sqlite-doc-3300000.zip &&
             -DSQLITE_ENABLE_FTS3_TOKENIZER=1" &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf sqlite-autoconf-3300000
+install -v -m755 -d /usr/share/doc/sqlite-3.30.1 &&
+cp -v -R sqlite-doc-3300100/* /usr/share/doc/sqlite-3.30.1 &&
+cd .. && rm -rf sqlite-autoconf-3300100
 
 -------------------------------------------------------------------
 
@@ -25,7 +27,7 @@ cd libraries/liblmdb &&
 make -j2               &&
 sed -i 's| liblmdb.a||' Makefile &&
 make prefix=/usr install &&
-cd .. && rm -rf lmdb-LMDB_0.9.24
+cd ../../ && rm -rf lmdb-LMDB_0.9.24
 
 -------------------------------------------------------------------
 

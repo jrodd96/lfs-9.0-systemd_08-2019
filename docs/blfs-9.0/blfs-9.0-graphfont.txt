@@ -32,7 +32,7 @@ cd .. && rm -rf lcms2-2.9
 
 ------------------------------------------------------------------------------
 
-tar -xf babl-0.1.70.tar.xz && cd babl-0.1.70 &&
+tar -xf babl-0.1.72.tar.xz && cd babl-0.1.72 &&
 mkdir bld &&
 cd    bld &&
 meson --prefix=/usr .. &&
@@ -41,7 +41,7 @@ ninja install &&
 install -v -m755 -d                         /usr/share/gtk-doc/html/babl/graphics &&
 install -v -m644 docs/*.{css,html}          /usr/share/gtk-doc/html/babl          &&
 install -v -m644 docs/graphics/*.{html,svg} /usr/share/gtk-doc/html/babl/graphics &&
-cd ../../ && rm -rf babl-0.1.70 
+cd ../../ && rm -rf babl-0.1.72 
 
 -------------------------------------------------------------------------------
 
@@ -74,11 +74,11 @@ export CPLUS_INCLUDE_PATH=/usr/include/c++/9.2.0:/usr/include
 
 ---------------------------------------------------------------------------------
 
-tar -xf harfbuzz-2.6.0.tar.xz && cd harfbuzz-2.6.0 &&
+tar -xf harfbuzz-2.6.4.tar.xz && cd harfbuzz-2.6.4 &&
 ./configure --prefix=/usr --with-gobject --with-graphite2 &&
 make -j2 && 
 make -j2 install &&
-cd .. && rm -rf harfbuzz-2.6.0
+cd .. && rm -rf harfbuzz-2.6.4
 
 ---------------------------------------------------------------------------------
 
@@ -120,39 +120,38 @@ cd .. && rm -rf fontconfig-2.13.1
 
 --------------------------------------------------------------------------------------
 
-tar -xf fribidi-1.0.5.tar.bz2 && cd fribidi-1.0.5 &&
+tar -xf fribidi-1.0.7.tar.bz2 && cd fribidi-1.0.7 &&
 mkdir build &&
 cd build    &&
-
 meson --prefix=/usr .. &&
 ninja &&
 ninja install &&
-cd ../../ && rm -rf fribidi-1.0.5
+cd ../../ && rm -rf fribidi-1.0.7
 
 --------------------------------------------------------------------------------------
 
-tar -xf libjpeg-turbo-2.0.2.tar.gz && cd libjpeg-turbo-2.0.2 &&
+tar -xf libjpeg-turbo-2.0.3.tar.gz && cd libjpeg-turbo-2.0.3 &&
 mkdir build &&
 cd    build &&
 cmake -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_BUILD_TYPE=RELEASE  \
       -DENABLE_STATIC=FALSE       \
-      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-2.0.2 \
+      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-2.0.3 \
       -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib  \
       .. &&
 make -j2 &&
 make -j2 install &&
-cd ../../ && rm -rf libjpeg-turbo-2.0.2
+cd ../../ && rm -rf libjpeg-turbo-2.0.3
 
 ---------------------------------------------------------------------------------------
 
-tar -xf gegl-0.4.16.tar.bz2 && cd gegl-0.4.16 &&
-./configure --prefix=/usr &&
-make -j2 &&
-make -j2 install &&
-install -v -m644 docs/*.{css,html} /usr/share/gtk-doc/html/gegl &&
-install -v -m644 docs/images/*.{png,ico,svg} /usr/share/gtk-doc/html/gegl/images &&
-cd .. && rm -rf gegl-0.4.16
+tar -xf gegl-0.4.18.tar.xz && cd gegl-0.4.18 &&
+mkdir build &&
+cd    build &&
+meson --prefix=/usr .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf gegl-0.4.18
 
 ----------------------------------------------------------------------------------------
 
@@ -167,14 +166,10 @@ cd .. && rm -rf giflib-5.2.1
 
 -----------------------------------------------------------------------------------------
 
-tar -xf glm-0.9.9.5.tar.gz && cd glm-0.9.9.5 &&
-mkdir build &&
-cd build    &&
-cmake -DCMAKE_INSTALL_PREFIX=/usr   \
-      -DCMAKE_INSTALL_LIBDIR=lib .. &&
-make -j2 &&
-make -j2 install &&
-cd ../../ && rm -rf glm-0.9.9.5
+tar -xf glm-0.9.9.6.tar.gz && cd glm-0.9.9.6 &&
+cp -r glm /usr/include/ &&
+cp -r doc /usr/share/doc/glm-0.9.9.6 &&
+cd .. && rm -rf glm-0.9.9.6
 
 ----------------------------------------------------------------------------------------
 
@@ -235,11 +230,11 @@ cd .. && rm -rf libmng-2.0.3
 
 ------------------------------------------------------------------------------------
 
-tar -xf libmypaint-1.3.0.tar.xz && cd libmypaint-1.3.0 &&
+tar -xf libmypaint-1.4.0.tar.xz && cd libmypaint-1.4.0 &&
 ./configure --prefix=/usr &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf libmypaint-1.3.0
+cd .. && rm -rf libmypaint-1.4.0
 
 ------------------------------------------------------------------------------------
 
@@ -256,13 +251,13 @@ cd .. && rm -rf LibRaw-0.19.5
 
 ------------------------------------------------------------------------------------
 
-tar -xf librsvg-2.46.2.tar.xz && cd librsvg-2.46.2 &&
+tar -xf librsvg-2.46.3.tar.xz && cd librsvg-2.46.3 &&
 ./configure --prefix=/usr    \
             --enable-vala    \
             --disable-static &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf librsvg-2.46.2
+cd .. && rm -rf librsvg-2.46.3
 
 ------------------------------------------------------------------------------------
 
@@ -306,7 +301,6 @@ sed -e 's/^LIBNEWT =/#&/' \
     -e '/install -m 644 $(LIBNEWT)/ s/^/#/' \
     -e 's/$(LIBNEWT)/$(LIBNEWTSONAME)/g' \
     -i Makefile.in                           &&
-
 ./configure --prefix=/usr --with-gpm-support &&
 make -j2 &&
 make -j2 install &&
@@ -361,7 +355,7 @@ cd ../../ && rm -rf pixman-0.38.4
 
 ----------------------------------------------------------------------------------
 
-tar -xf poppler-0.79.0.tar.xz && cd poppler-0.79.0 &&
+tar -xf poppler-0.82.0.tar.xz && cd poppler-0.82.0 &&
 mkdir build                         &&
 cd    build                         &&
 cmake  -DCMAKE_BUILD_TYPE=Release   \
@@ -371,35 +365,35 @@ cmake  -DCMAKE_BUILD_TYPE=Release   \
        ..                           &&
 make -j2 &&
 make -j2 install &&
-install -v -m755 -d           /usr/share/doc/poppler-0.79.0 &&
-cp -vr ../glib/reference/html /usr/share/doc/poppler-0.79.0 &&
+install -v -m755 -d           /usr/share/doc/poppler-0.82.0 &&
+cp -vr ../glib/reference/html /usr/share/doc/poppler-0.82.0 &&
 tar -xf ../../poppler-data-0.4.9.tar.gz &&
 cd poppler-data-0.4.9                   &&
 make prefix=/usr install &&
-cd ../ && rm -rf poppler-0.79.0
+cd ../../ && rm -rf poppler-0.82.0
 
 ----------------------------------------------------------------------------------
 
-tar -xf potrace-1.15.tar.gz && cd potrace-1.15 &&
+tar -xf potrace-1.16.tar.gz && cd potrace-1.16 &&
 ./configure --prefix=/usr                        \
             --disable-static                     \
-            --docdir=/usr/share/doc/potrace-1.15 \
+            --docdir=/usr/share/doc/potrace-1.16 \
             --enable-a4                          \
             --enable-metric                      \
             --with-libpotrace                    &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf potrace-1.15
+cd .. && rm -rf potrace-1.16
 
 -----------------------------------------------------------------------------------
 
-tar -xf qpdf-9.0.0.tar.gz && cd qpdf-9.0.0 &&
+tar -xf qpdf-9.0.2.tar.gz && cd qpdf-9.0.2 &&
 ./configure --prefix=/usr    \
             --disable-static \
-            --docdir=/usr/share/doc/qpdf-8.4.2 &&
+            --docdir=/usr/share/doc/qpdf-9.0.2 &&
 make -j2 &&
 make -j2 install &&
-cd .. && rm -rf qpdf-9.0.0
+cd .. && rm -rf qpdf-9.0.2
 
 ------------------------------------------------------------------------------------
 
@@ -419,8 +413,16 @@ cd .. && rm -rf sassc-3.6.1
 
 -------------------------------------------------------------------------------------
 
+tar -xf woff2-1.0.2.tar.gz && cd woff2-1.0.2 &&
+mkdir out                           &
+cd out                              &
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release .. &
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf woff2-1.0.2
 
-
+--------------------------------------------------------------------------------
 
 
 

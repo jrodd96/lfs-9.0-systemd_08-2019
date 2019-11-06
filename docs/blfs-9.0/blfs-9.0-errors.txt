@@ -1,0 +1,135 @@
+********************* ERRORS ****************************************************
+---------------------------------------------------------------------------------
+
+**I DONT FUCKING KNOW
+
+tar -xf graphviz-2.42.3.tar.gz && cd graphviz-2.42.3 &&
+sed -i '/LIBPOSTFIX="64"/s/64//' configure.ac &&
+autoreconf                &&
+./configure --prefix=/usr --with-javaincludedir="$JAVA_HOME/include -I$JAVA_HOME/include/linux" --with-webp --with-smyrna &&
+make -j2 &&
+make -j2 install &&
+ln -v -s /usr/share/graphviz/doc \
+         /usr/share/doc/graphviz-2.42.3 &&
+cd .. && rm -rf graphviz-2.42.3
+
+---------------------------------------------------------------------------------
+
+tar -xf qemu-4.1.0.tar.xz && cd qemu-4.1.0
+if [ $(uname -m) = i686 ]; then
+   QEMU_ARCH=i386-softmmu
+else
+   QEMU_ARCH=x86_64-softmmu
+fi
+mkdir -vp build &&
+cd        build &&
+
+../configure --prefix=/usr               \
+             --sysconfdir=/etc           \
+             --target-list=$QEMU_ARCH    \
+             --python=python3            \
+             --audio-drv-list=alsa       \
+             --docdir=/usr/share/doc/qemu-4.1.0 &&
+
+unset QEMU_ARCH &&
+
+make
+make install
+cd ../../ && rm -rf qemu-4.1.0
+
+---------------------------------------------------------------------------------
+
+**Parse error at 'std'
+--> unset CPLUS_INCLUDE_PATH
+
+tar -xf vlc-3.0.8.tar.xz && cd vlc-3.0.8 &&
+sed -i '/vlc_demux.h/a #define LUA_COMPAT_APIINTCASTS' modules/lua/vlc.h   &&
+sed -i '/LIBSSH2_VERSION_NUM/s/10801/10900/' modules/access/sftp.c &&
+BUILDCC=gcc ./configure --prefix=/usr    \
+                        --disable-opencv \
+                        --disable-vpx    &&
+make -j2 &&
+make docdir=/usr/share/doc/vlc-3.0.8 install &&
+gtk-update-icon-cache -qtf /usr/share/icons/hicolor &&
+update-desktop-database -q &&
+cd .. && rm -rf vlc-3.0.8
+
+
+tar -xf v4l-utils-1.16.6.tar.bz2 && cd v4l-utils-1.16.6 &&
+./configure --prefix=/usr     \
+            --sysconfdir=/etc \
+            --disable-static  &&
+make -j1 &&
+make -j1 install &&
+cd .. && rm -rf v4l-utils-1.16.6
+
+
+tar -xf qca-2.2.1.tar.xz && cd qca-2.2.1 &&
+sed -i 's@cert.pem@certs/ca-bundle.crt@' CMakeLists.txt &&
+mkdir build &&
+cd    build &&
+cmake -DCMAKE_INSTALL_PREFIX=$QT5DIR            \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DQCA_MAN_INSTALL_DIR:PATH=/usr/share/man \
+      .. &&
+make -j2 &&
+make -j2 install &&
+cd ../../ && rm -rf qca-2.2.1
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------

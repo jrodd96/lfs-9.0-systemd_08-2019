@@ -19,7 +19,7 @@ cd        build &&
 
 unset QEMU_ARCH &&
 
-make -j1
+make &&
 make install
 cd ../../ && rm -rf qemu-4.1.0
 
@@ -479,7 +479,7 @@ cd .. && rm -rf autofs-5.1.5
 
 -------------------------------------------------------------------------------
 
-tar -xf bluez-5.51.tar.xz && cd bluez-5.51 &&
+tar -xf bluez-5.52.tar.xz && cd bluez-5.52 &&
 ./configure --prefix=/usr         \
             --sysconfdir=/etc     \
             --localstatedir=/var  \
@@ -489,9 +489,9 @@ make -j2 install &&
 ln -svf ../libexec/bluetooth/bluetoothd /usr/sbin &&
 install -v -dm755 /etc/bluetooth &&
 install -v -m644 src/main.conf /etc/bluetooth/main.conf &&
-install -v -dm755 /usr/share/doc/bluez-5.51 &&
+install -v -dm755 /usr/share/doc/bluez-5.52 &&
 install -v -m644 doc/*.txt /usr/share/doc/bluez-5.51 &&
-cd .. && rm -rf bluez-5.51
+cd .. && rm -rf bluez-5.52
 
 -------------------------------------------------------------------------------
 
@@ -747,7 +747,7 @@ tar -xf dbus-1.12.16.tar.gz && cd dbus-1.12.16 &&
             --docdir=/usr/share/doc/dbus-1.12.16 \
             --with-console-auth-dir=/run/console \
             --with-system-pid-file=/run/dbus/pid \
-            --with-system-socket=/run/dbus/system_bus_socket &&
+            --with-system-socket=/run/dbus/system_bus_socket --enable-x11-autolaunch --enable-systemd --enable-inotify &&
 make -j2 &&
 make -j2 install &&
 mv -v /usr/lib/libdbus-1.so.* /lib &&
@@ -775,7 +775,7 @@ cd ../../ && rm -rf elogind-241.3
 ------------------------------------------------------------------------------
 
 tar -xf systemd-243.tar.gz && cd systemd-243 &&
-patch -Np1 -i ../../patches/systemd-243-consolidated_fixes-1.patch &&
+patch -Np1 -i ../../../patches/systemd-243-consolidated_fixes-1.patch &&
 sed -i 's/GROUP="render", //' rules/50-udev-default.rules.in &&
 mkdir build &&
 cd    build &&
@@ -803,4 +803,21 @@ cd ../../ && rm -rf systemd-243
 
 ------------------------------------------------------------------------------
 
+tar -xf lynx2.8.9rel.1.tar.bz2 && cd lynx2.8.9rel.1 &&
+./configure --prefix=/usr          \
+            --sysconfdir=/etc/lynx \
+            --datadir=/usr/share/doc/lynx-2.8.9rel.1 \
+            --with-zlib            \
+            --with-bzlib           \
+            --with-ssl             \
+            --with-screen=ncursesw \
+            --enable-locale-charset &&
+make -j2 &&
+make install-full &&
+chgrp -v -R root /usr/share/doc/lynx-2.8.9rel.1/lynx_doc &&
+cd .. && rm -rf lynx2.8.9rel.1
+
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 

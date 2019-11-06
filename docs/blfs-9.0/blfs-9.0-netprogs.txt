@@ -27,7 +27,7 @@ cd .. && rm -rf lynx2.8.9rel.1
 
 ------------------------------------------------------------------------------
 
-tar -xf curl-7.65.3.tar.xz && cd curl-7.65.3 &&
+tar -xf curl-7.66.0.tar.xz && cd curl-7.66.0 &&
 ./configure --prefix=/usr                           \
             --disable-static                        \
             --enable-threaded-resolver              \
@@ -38,9 +38,9 @@ make -j2 &&
 make -j2 install &&
 rm -rf docs/examples/.deps &&
 find docs \( -name Makefile\* -o -name \*.1 -o -name \*.3 \) -exec rm {} \; &&
-install -v -d -m755 /usr/share/doc/curl-7.65.3 &&
-cp -v -R docs/*     /usr/share/doc/curl-7.65.3 &&
-cd .. && rm -rf curl-7.65.3
+install -v -d -m755 /usr/share/doc/curl-7.66.0 &&
+cp -v -R docs/*     /usr/share/doc/curl-7.66.0 &&
+cd .. && rm -rf curl-7.66.0
 
 ----------------------------------------------------------------------------------
 
@@ -157,13 +157,13 @@ cd .. && rm -rf libnl-3.5.0
 
 -------------------------------------------------------------------------------
 
-tar -xf libpcap-1.9.0.tar.gz && cd libpcap-1.9.0 &&
-patch -Np1 -i ../../../patches/libpcap-1.9.0-enable_bluetooth-1.patch &&
+tar -xf libpcap-1.9.1.tar.gz && cd libpcap-1.9.1 &&
+patch -Np1 -i ../../../patches/libpcap-1.9.1-enable_bluetooth-1.patch &&
 ./configure --prefix=/usr &&
 make -j2 &&
 sed -i '/INSTALL_DATA.*libpcap.a\|RANLIB.*libpcap.a/ s/^/#/' Makefile &&
 make -j2 install &&
-cd .. && rm -rf libpcap-1.9.0
+cd .. && rm -rf libpcap-1.9.1
 
 -------------------------------------------------------------------------------
 
@@ -221,7 +221,7 @@ cd .. && rm -rf bridge-utils-1.6
 
 tar -xf cifs-utils-6.9.tar.bz2 && cd cifs-utils-6.9 &&
 ./configure --prefix=/usr \
-            --disable-pam &&
+            --with-pamdir=/lib/security &&
 make -j2 &&
 make -j2 install &&
 cd .. && rm -rf cifs-utils-6.9
@@ -321,7 +321,7 @@ LDFLAGS="-ltirpc"                      \
     --with-pammodulesdir=/lib/security \
     --enable-fhs                       \
     --without-ad-dc                    \
-    --enable-selftest                  &&
+    --enable-selftest --systemd-install-services --with-systemd    &&
 make -j2 &&
 make -j2 install &&
 mv -v /usr/lib/libnss_win{s,bind}.so*   /lib                       &&
@@ -395,9 +395,7 @@ CXXFLAGS+="-O2 -fPIC"            \
 meson --prefix /usr              \
       --sysconfdir /etc          \
       --localstatedir /var       \
-      -Djson_validation=false    \
       -Dlibaudit=no              \
-      -Dlibpsl=false             \
       -Dnmtui=true               \
       -Dovs=false                \
       -Dppp=false                \
@@ -416,7 +414,7 @@ cd ../../ && rm -rf NetworkManager-1.20.4
 -------------------------------------------------------------------------------
 
 tar -xf nmap-7.80.tar.bz2 && cd nmap-7.80 &&
-./configure --prefix=/usr --with-liblua=included &&
+./configure --prefix=/usr --with-liblua=included --with-openssl --with-libpcap --with-liblinear --with-libpcre --with-libssh2 &&
 make -j2 &&
 make -j2 install &&
 cd .. && rm -rf nmap-7.80
@@ -442,20 +440,20 @@ cd .. && rm -rf whois-5.4.3
 
 -------------------------------------------------------------------------------
 
-tar -xf wireshark-3.0.5.tar.xz && cd wireshark-3.0.5 &&
+tar -xf wireshark-3.0.6.tar.xz && cd wireshark-3.0.6 &&
 mkdir build &&
 cd    build &&
 cmake -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_BUILD_TYPE=Release  \
-      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/wireshark-3.0.5 \
+      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/wireshark-3.0.6 \
       -G Ninja \
       .. &&
 ninja &&
 ninja install &&
-install -v -m755 -d /usr/share/doc/wireshark-3.0.5 &&
+install -v -m755 -d /usr/share/doc/wireshark-3.0.6 &&
 install -v -m644    ../README.linux ../doc/README.* ../doc/{*.pod,randpkt.txt} \
-                    /usr/share/doc/wireshark-3.0.5 &&
-pushd /usr/share/doc/wireshark-3.0.5 &&
+                    /usr/share/doc/wireshark-3.0.6 &&
+pushd /usr/share/doc/wireshark-3.0.6 &&
    for FILENAME in ../../wireshark/*.html; do
       ln -s -v -f $FILENAME .
    done &&
@@ -463,13 +461,28 @@ popd
 unset FILENAME &&
 chown -v root:wireshark /usr/bin/{tshark,dumpcap} &&
 chmod -v 6550 /usr/bin/{tshark,dumpcap} &&
-cd ../../ && rm -rf wireshark-3.0.5
+cd ../../ && rm -rf wireshark-3.0.6
+
+-------------------------------------------------------------------------------
+
+tar -xf links-2.20.2.tar.bz2 && cd links-2.20.2 &&
+./configure --prefix=/usr --mandir=/usr/share/man --enable-graphics &&
+make -j2 &&
+make -j2 install &&
+install -v -d -m755 /usr/share/doc/links-2.20.2 &&
+install -v -m644 doc/links_cal/* KEYS BRAILLE_HOWTO \
+    /usr/share/doc/links-2.20.2 &&
+cd .. && rm -rf links-2.20.2
 
 -------------------------------------------------------------------------------
 
 tar -xf geoclue-2.5.5.tar.bz2 && cd geoclue-2.5.5 &&
-
-cd .. && rm -rf geoclue-2.5.5
+mkdir build &&
+cd    build &&
+meson --prefix=/usr --sysconfdir=/etc -Dgtk-doc=false -Dnmea-source=false .. &&
+ninja &&
+ninja install &&
+cd ../../ && rm -rf geoclue-2.5.5
 
 -------------------------------------------------------------------------------
 
@@ -517,9 +530,12 @@ cd .. && rm -rf libnftnl-1.1.4
 
 -------------------------------------------------------------------------------
 
-tar -xf && cd &&
-
-cd .. && rm -rf
+tar -xf dhcpcd-8.1.1.tar.xz && cd dhcpcd-8.1.1 &&
+./configure --libexecdir=/lib/dhcpcd \
+            --dbdir=/var/lib/dhcpcd  &&
+make -j2 &&
+make -j2 install &&
+cd .. && rm -rf dhcpcd-8.1.1
 
 -------------------------------------------------------------------------------
 

@@ -134,7 +134,7 @@ cd    build &&
 meson --prefix=/usr --sysconfdir=/etc .. &&
 ninja &&
 ninja install &&
-cd .. && rm -rf dconf-0.34.0
+cd ../../ && rm -rf dconf-0.34.0
 
 **ACTIVE BUG W/ MESON-0.52.0:
 [79/92] Linking target tests/gdbus-thread-leak.
