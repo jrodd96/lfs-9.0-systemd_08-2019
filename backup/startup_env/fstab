@@ -1,0 +1,26 @@
+# LFS 9.0 [JWS] -- /etc/fstab
+# Written By: Jared Stevens
+# Description: For mounting the partitions on hard disk during boot
+# Specifics: EFI boot, tmp partition, tarbell sources partition
+
+# Begin /etc/fstab
+
+# <file_sys>         <mount-pt>        <type>    <options>           <dump> <fsck>
+# ------------------------------------------------------------------------------
+
+# /dev/sdb1 (EFI)
+UUID=424C-DF4B       /boot/efi          vfat      defaults              0      1
+
+# /dev/sdb2 (root)
+UUID=b6f4d802-7aba-4ab4-98c8-83f1e7ea2767  /         ext4  defaults     1      1
+
+# /dev/sdb3 (LFS sources)
+UUID=d5d8e4f4-a394-4f47-8332-a89993ae186b  /usr/src  ext4  defaults     1      1
+
+# /dev/sdb4 (tmp)
+UUID=7ea63e40-da30-4436-b7f0-18299f21aba7  /tmp      ext4  defaults     1      1
+
+# /dev/sdb5 (swap)
+UUID=c287e47d-5b21-45ff-abc1-8473cb0528ae  swap      swap  pri=1        0      0
+
+# end /etc/fstab

@@ -1,0 +1,5 @@
+NAME="LFS [JWS]"
+VERSION="9.0-systemd"
+ID=lfs
+PRETTY_NAME="Linux From Scratch 9.0-systemd [JWS]"
+VERSION_CODENAME="JRodd96"

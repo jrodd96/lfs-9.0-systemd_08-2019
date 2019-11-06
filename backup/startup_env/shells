@@ -1,0 +1,14 @@
+# Begin /etc/shells
+
+# Bash
+/bin/sh
+/bin/bash
+
+# Tcsh
+/bin/tcsh
+/bin/csh
+
+# zsh
+/bin/zsh
+
+# End /etc/shells
