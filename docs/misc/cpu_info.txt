@@ -1,0 +1,12 @@
+# CPU Specs of Dell Inspiron 5579 laptop
+
+Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+----------------------------------------
+processor  : 0
+vendor_id  : GenuineIntel
+cpu_family : 6
+model      : 142
+stepping   : 10
+microcode  : 0xb4
+
+Microcode Identification : 06-8e-0a
