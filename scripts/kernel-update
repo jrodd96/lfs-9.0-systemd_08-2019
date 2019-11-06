@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# For moving the compiled kernel, system map, and config files to /boot directory as well as compiling new kernel builds and initrd.img files
+# Created by: Jared Stevens
+# System: LFS-9.0 [JWS]
+# Date: 2019-10-11 13:25 EST
+# *************************************************************************
+
+menu() {
+
+	echo
+	read -p "Enter kernel version number (i.e. linux-'5.3.1'): " kernel
+
+	if [ ! -f /usr/src/kernel/linux-$kernel ]; then
+	    tar -xf /usr/src/kernel/linux-$kernel.tar.xz;
+
+	    if [ $? -eq 1 ]; then
+	        echo "[ERROR] A valid directory or tarbell for the version"
+	        echo "number specified could NOT be found in:"
+	        echo "/usr/src/kernel/"
+	        echo
+	        echo "Ensure the kernel package is present and retry."
+	        exit 1
+	    fi
+	fi
+
+	echo
+	echo "Select from the following options..."
+	echo "(1) Run a fresh build (i.e. make mrproper + make defconfig)"
+	echo "(2) Run the menuconfig + make commands"
+	echo "(3) Run ONLY the make and make modules_install cmds"
+	echo "(4) Run ONLY the menuconfig command"
+	echo "(5) Run ONLY the cp -iv file copy commands"
+	echo "(6) Run ONLY the make mrproper command"
+	echo "(7) Copy a pre-existing config file in /usr/src/kernel/"
+	echo "(8) Exit"
+	echo
+	read -p "Selected option (1-6): " option
+
+	if [ "$option" == "1" ]; then
+		full_build1
+
+		ask_init
+
+	elif [ "$option" == "2" ]; then
+		pushd /usr/src/kernel/linux-$kernel
+			make_cmds2
+			copy5
+		popd
+
+		ask_init
+
+	elif [ "$option" == "3" ]; then
+		pushd /usr/src/kernel/linux-$kernel
+			make_cmds3
+			copy5
+		popd
+
+		ask_init
+
+	elif [ "$option" == "4" ]; then
+		menuconfig4
+
+	elif [ "$option" == "5" ]; then
+		pushd /usr/src/kernel/linux-$kernel
+			copy5
+		popd
+
+		ask_init
+	elif [ "$option" == "6" ]; then
+		pushd /usr/src/kernel/linux-$kernel
+			make mrproper;
+		popd
+		menu
+	elif [ "$option" == "7" ]; then
+		cp /usr/src/kernel/config-$kernel /usr/src/kernel/linux-$kernel/.config;
+		menu
+	else
+		exit 0
+	fi
+}
+# -------------------------------------------------------------------------
+
+make_cmds2() {
+
+	make menuconfig;
+	make;
+	make modules_install;
+}
+# -------------------------------------------------------------------------
+
+make_cmds3() {
+
+	make;
+	#make modules;
+	make modules_install;
+}
+# -------------------------------------------------------------------------
+
+menuconfig4() {
+
+	pushd /usr/src/kernel/linux-$kernel
+		make menuconfig;
+	popd
+
+	exit 0
+}
+# -------------------------------------------------------------------------
+
+copy5() {
+
+	cp -iv arch/x86/boot/bzImage /boot/vmlinuz-$kernel-lfs-9.0-systemd;
+	cp -iv System.map /boot/System.map-$kernel;
+	cp -iv .config /boot/config-$kernel;
+}
+# -------------------------------------------------------------------------
+
+full_build1() {
+
+	pushd linux-$kernel
+		make mrproper;
+		make defconfig;
+		make_cmds2
+		copy5
+	popd
+}
+# -------------------------------------------------------------------------
+
+ask_init() {
+
+	echo
+	read -p "Create new initrd.img? (y/n): " answer
+
+	if [ "$answer" == "y" ]; then
+		mkinitramfs $kernel;
+		mv initrd.img-$kernel /boot/;
+		echo "Remember to update grub.cfg with new/updated entries!"
+		exit 0
+	else
+		exit 0
+	fi
+}
+# -------------------------------------------------------------------------
+
+# Main menu call:
+menu
