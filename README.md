@@ -1,6 +1,6 @@
 # LFS Build Utilities
-# Jared Stevens -- <jared.stevens1229@gmail.com> 
-# Updated: 2019-11-06 14:32 EST
+Jared Stevens -- <jared.stevens1229@gmail.com> 
+Updated: 2019-11-06 14:32 EST
 
 # Description: 
  - LFS/BLFS backup startup scripts/configs, build documents, and scripts
