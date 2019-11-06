@@ -421,7 +421,7 @@ sed -i '/LIBTOOL_INSTALL/d' c++/Makefile.in
             --without-normal        \
             --enable-pc-files       \
             --enable-widec
-make -j2 &&
+make &&
 make -j2 install &&
 mv -v /usr/lib/libncursesw.so.6* /lib
 ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so
@@ -1081,9 +1081,13 @@ EOF
 tar -xf systemd-243.tar.gz && cd systemd-243 &&
 patch -Np1 -i ../../patches/systemd-243-consolidated_fixes-1.patch &&
 ln -sf /tools/bin/true /usr/bin/xsltproc &&
+for file in /tools/lib/lib{blkid,mount,uuid}.so*; do
+    ln -sf $file /usr/lib/
+done
 tar -xf ../systemd-man-pages-243.tar.xz
 sed '177,$ d' -i src/resolve/meson.build &&
 sed -i 's/GROUP="render", //' rules/50-udev-default.rules.in &&
+rm -rf build &&
 mkdir build &&
 cd    build &&
 PKG_CONFIG_PATH="/usr/lib/pkgconfig:/tools/lib/pkgconfig" \
